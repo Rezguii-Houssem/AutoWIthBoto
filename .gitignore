@@ -1,0 +1,13 @@
+.playwright-mcp/
+.python-mcp/
+.next-devtools/
+.gemini/
+*.zip
+node_modules/
+__pycache__/
+.env
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+builds/
