@@ -19,8 +19,6 @@ __pycache__/
 *$py.class
 .venv/
 venv/
-ENV/
-env/
 .env
 db.sqlite3
 .pytest_cache/
