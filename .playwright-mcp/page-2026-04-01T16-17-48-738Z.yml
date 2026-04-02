@@ -1,0 +1,8 @@
+- generic [ref=e7]:
+  - navigation [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e10]: 🤖
+      - generic [ref=e11]: AutoWithBoto
+  - generic [ref=e16]:
+    - heading "AWS Automation Hub" [level=2] [ref=e17]
+    - button "Login with Cognito" [ref=e18] [cursor=pointer]
