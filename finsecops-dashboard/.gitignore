@@ -40,6 +40,8 @@ Thumbs.db
 # Other
 *.log
 .tmp/
+.playwright-mcp/
+*.zip
 all_files.txt
 spline.txt
 files.txt
