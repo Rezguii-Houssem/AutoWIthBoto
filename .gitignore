@@ -1,13 +1,46 @@
-.playwright-mcp/
-.python-mcp/
-.next-devtools/
-.gemini/
-*.zip
+# Node
 node_modules/
+dist/
+build/
+.next/
+out/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
 __pycache__/
-.env
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+db.sqlite3
+
+# Terraform
 .terraform/
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+
+# MCP & Tools
+.playwright-mcp/
+.python-mcp/
+.next-devtools/
+.gemini/
+.env*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Other
+*.log
+.tmp/
+*.zip
+all_files.txt
+spline.txt
+files.txt
 builds/
