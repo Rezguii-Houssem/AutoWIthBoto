@@ -4,9 +4,10 @@ resource "aws_lambda_function" "func" {
   runtime       = var.runtime
   role          = var.role_arn
   
-  # Placeholder for deployment package
-  filename      = "${path.module}/dummy.zip"
-  
+  # Deployment package
+  filename         = var.filename
+  source_code_hash = var.source_code_hash
+
   environment {
     variables = var.environment_variables
   }
@@ -14,7 +15,7 @@ resource "aws_lambda_function" "func" {
   timeout       = 30
 
   lifecycle {
-    ignore_changes = [filename, source_code_hash]
+    ignore_changes = [filename]
   }
 }
 

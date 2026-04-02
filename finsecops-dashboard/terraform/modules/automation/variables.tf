@@ -1,20 +1,20 @@
 variable "project_name" {
   description = "Project name"
-  type        = "string"
+  type        = string
 }
 
 variable "notifier_lambda_arn" {
   description = "ARN of the notifier Lambda function"
-  type        = "string"
+  type        = string
 }
 
 variable "notifier_lambda_name" {
   description = "Name of the notifier Lambda function"
-  type        = "string"
+  type        = string
 }
 
 variable "schedule_expression" {
   description = "Cron expression for the daily scan"
-  type        = "string"
+  type        = string
   default     = "rate(1 day)"
 }

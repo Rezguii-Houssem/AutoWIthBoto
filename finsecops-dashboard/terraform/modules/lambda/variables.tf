@@ -31,3 +31,14 @@ variable "route_key" {
 variable "authorizer_id" {
   type = string
 }
+
+variable "filename" {
+  type        = string
+  description = "Path to the lambda zip file"
+}
+
+variable "source_code_hash" {
+  type        = string
+  description = "Base64 encoded SHA256 hash of the zip file"
+  default     = null
+}
