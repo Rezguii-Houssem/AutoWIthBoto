@@ -41,42 +41,7 @@ module "cloudfront" {
   s3_bucket_regional_domain_name = module.s3_frontend.bucket_regional_domain_name
 }
 
-# Lambda Packaging
-data "archive_file" "get_idle_ec2" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/finops/get_idle_ec2"
-  output_path = "../../builds/get_idle_ec2.zip"
-}
 
-data "archive_file" "get_unattached_ebs" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/finops/get_unattached_ebs"
-  output_path = "../../builds/get_unattached_ebs.zip"
-}
-
-data "archive_file" "check_s3_public" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/secops/check_s3_public"
-  output_path = "../../builds/check_s3_public.zip"
-}
-
-data "archive_file" "check_sg_open" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/secops/check_sg_open"
-  output_path = "../../builds/check_sg_open.zip"
-}
-
-data "archive_file" "ses_notifier" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/ses_notifier"
-  output_path = "../../builds/ses_notifier.zip"
-}
-
-data "archive_file" "toggle_scheduler" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/toggle_scheduler"
-  output_path = "../../builds/toggle_scheduler.zip"
-}
 
 # Scan Lambdas
 module "get_idle_ec2" {
@@ -88,8 +53,8 @@ module "get_idle_ec2" {
   route_key             = "GET /finops/ec2/idle"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = data.archive_file.get_idle_ec2.output_path
-  source_code_hash      = data.archive_file.get_idle_ec2.output_base64sha256
+  filename              = "../../builds/get_idle_ec2.zip"
+  source_code_hash      = filebase64sha256("../../builds/get_idle_ec2.zip")
 }
 
 module "get_unattached_ebs" {
@@ -101,8 +66,8 @@ module "get_unattached_ebs" {
   route_key             = "GET /finops/ebs/unattached"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = data.archive_file.get_unattached_ebs.output_path
-  source_code_hash      = data.archive_file.get_unattached_ebs.output_base64sha256
+  filename              = "../../builds/get_unattached_ebs.zip"
+  source_code_hash      = filebase64sha256("../../builds/get_unattached_ebs.zip")
 }
 
 module "check_s3_public" {
@@ -114,8 +79,8 @@ module "check_s3_public" {
   route_key             = "GET /secops/s3"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = data.archive_file.check_s3_public.output_path
-  source_code_hash      = data.archive_file.check_s3_public.output_base64sha256
+  filename              = "../../builds/check_s3_public.zip"
+  source_code_hash      = filebase64sha256("../../builds/check_s3_public.zip")
 }
 
 module "check_sg_open" {
@@ -127,8 +92,8 @@ module "check_sg_open" {
   route_key             = "GET /secops/sg"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = data.archive_file.check_sg_open.output_path
-  source_code_hash      = data.archive_file.check_sg_open.output_base64sha256
+  filename              = "../../builds/check_sg_open.zip"
+  source_code_hash      = filebase64sha256("../../builds/check_sg_open.zip")
 }
 
 # Orchestration & Automation Lambdas
@@ -141,8 +106,8 @@ module "ses_notifier" {
   route_key             = "POST /automation/scan/manual"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = data.archive_file.ses_notifier.output_path
-  source_code_hash      = data.archive_file.ses_notifier.output_base64sha256
+  filename              = "../../builds/ses_notifier.zip"
+  source_code_hash      = filebase64sha256("../../builds/ses_notifier.zip")
 }
 
 module "toggle_scheduler" {
@@ -156,8 +121,8 @@ module "toggle_scheduler" {
   environment_variables = {
     RULE_NAME = module.automation.rule_name
   }
-  filename         = data.archive_file.toggle_scheduler.output_path
-  source_code_hash = data.archive_file.toggle_scheduler.output_base64sha256
+  filename         = "../../builds/toggle_scheduler.zip"
+  source_code_hash = filebase64sha256("../../builds/toggle_scheduler.zip")
 }
 
 module "automation" {
@@ -167,11 +132,7 @@ module "automation" {
   notifier_lambda_name = module.ses_notifier.lambda_name
 }
 
-data "archive_file" "scan_services" {
-  type        = "zip"
-  source_dir  = "../../../backend/lambdas/finops/scan_services"
-  output_path = "../../builds/scan_services.zip"
-}
+
 
 module "scan_services" {
   source                = "../../modules/lambda"
@@ -182,8 +143,8 @@ module "scan_services" {
   route_key             = "GET /finops/scan"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = data.archive_file.scan_services.output_path
-  source_code_hash      = data.archive_file.scan_services.output_base64sha256
+  filename              = "../../builds/scan_services.zip"
+  source_code_hash      = filebase64sha256("../../builds/scan_services.zip")
 }
 
 
