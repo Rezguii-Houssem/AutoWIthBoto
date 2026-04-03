@@ -21,14 +21,14 @@ def package_lambda(src_dir, dest_file, shared_dir=None):
         for root, dirs, files in os.walk(src_dir):
             for file in files:
                 abs_path = os.path.join(root, file)
-                rel_path = os.path.relpath(abs_path, src_dir)
+                rel_path = os.path.relpath(abs_path, src_dir).replace("\\", "/")
                 zipf.write(abs_path, rel_path)
                 
         if shared_dir and os.path.exists(shared_dir):
             for root, dirs, files in os.walk(shared_dir):
                 for file in files:
                     abs_path = os.path.join(root, file)
-                    rel_path = os.path.join("shared", os.path.relpath(abs_path, shared_dir))
+                    rel_path = f"shared/{os.path.relpath(abs_path, shared_dir).replace(os.path.sep, '/')}"
                     zipf.write(abs_path, rel_path)
 
 def main():

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const SecOpsForm = ({ onScan, title, actions }) => {
   const [params, setParams] = useState({
-    region: 'eu-west-1',
+    region: 'eu-west-3',
     action: 'scan'
   });
 

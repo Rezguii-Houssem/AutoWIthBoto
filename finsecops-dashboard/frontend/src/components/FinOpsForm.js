@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const FinOpsForm = ({ onScan, title, actions }) => {
   const [params, setParams] = useState({
-    region: 'eu-west-1',
+    region: 'eu-west-3',
     tag_key: '',
     tag_value: '',
     cpu_threshold: 5,
