@@ -9,9 +9,13 @@ variable "project_name" {
 }
 
 variable "google_client_id" {
-  type    = string
+  type      = string
+  default   = ""
+  sensitive = true
 }
 
 variable "google_client_secret" {
-  type    = string
+  type      = string
+  default   = ""
+  sensitive = true
 }

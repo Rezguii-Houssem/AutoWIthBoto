@@ -1,6 +1,13 @@
 resource "aws_apigatewayv2_api" "main" {
   name          = "${var.project_name}_API"
   protocol_type = "HTTP"
+
+  cors_configuration {
+    allow_origins = ["*"] # Consider restricting to CloudFront URL in production
+    allow_methods = ["GET", "POST", "OPTIONS"]
+    allow_headers = ["content-type", "authorization"]
+    max_age       = 300
+  }
 }
 
 resource "aws_apigatewayv2_stage" "dev" {

@@ -50,11 +50,17 @@ def main():
     user_pool_id = get_terraform_output("cognito_user_pool_id", terraform_dir)
     client_id = get_terraform_output("cognito_client_id", terraform_dir)
     api_url = get_terraform_output("api_gateway_url", terraform_dir)
+    cognito_domain = get_terraform_output("cognito_domain", terraform_dir)
+    
+    # Get region from environment or default
+    region = "eu-west-3" 
 
     env_content = [
         f"REACT_APP_COGNITO_USER_POOL_ID={user_pool_id}",
         f"REACT_APP_COGNITO_CLIENT_ID={client_id}",
-        f"REACT_APP_API_URL={api_url}"
+        f"REACT_APP_API_URL={api_url}",
+        f"REACT_APP_COGNITO_DOMAIN={cognito_domain}",
+        f"REACT_APP_AWS_REGION={region}"
     ]
     
     with open(os.path.join(frontend_dir, ".env"), "w") as f:
