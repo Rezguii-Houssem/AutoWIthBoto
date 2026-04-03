@@ -5,7 +5,7 @@ import FinOpsForm from './FinOpsForm';
 import SecOpsForm from './SecOpsForm';
 import Terminal from './Terminal';
 
-const API_ENDPOINT = "https://your-api-id.execute-api.eu-west-1.amazonaws.com/dev";
+const API_ENDPOINT = process.env.REACT_APP_API_URL || "https://your-api-id.execute-api.eu-west-1.amazonaws.com/dev";
 
 const Dashboard = ({ token, activeTab }) => {
   const [results, setResults] = useState(null);

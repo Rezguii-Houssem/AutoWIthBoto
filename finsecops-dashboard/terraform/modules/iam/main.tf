@@ -42,7 +42,8 @@ resource "aws_iam_policy" "lambda_policy" {
           "ses:SendEmail",
           "lambda:InvokeFunction",
           "events:EnableRule",
-          "events:DisableRule"
+          "events:DisableRule",
+          "ce:GetCostAndUsageWithResources"
         ]
         Resource = "*"
       }

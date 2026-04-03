@@ -163,7 +163,23 @@ module "automation" {
   notifier_lambda_name = module.ses_notifier.lambda_name
 }
 
-# Output CloudFront URL
-output "cloudfront_url" {
-  value = "https://${module.cloudfront.cloudfront_domain_name}"
+data "archive_file" "scan_services" {
+  type        = "zip"
+  source_dir  = "../../../backend/lambdas/finops/scan_services"
+  output_path = "../../builds/scan_services.zip"
 }
+
+module "scan_services" {
+  source                = "../../modules/lambda"
+  function_name         = "scanServices"
+  handler               = "lambda_function.lambda_handler"
+  role_arn              = module.iam.lambda_role_arn
+  api_id                = module.api_gateway.api_id
+  route_key             = "GET /finops/scan"
+  authorizer_id         = module.api_gateway.authorizer_id
+  environment_variables = {}
+  filename              = data.archive_file.scan_services.output_path
+  source_code_hash      = data.archive_file.scan_services.output_base64sha256
+}
+
+

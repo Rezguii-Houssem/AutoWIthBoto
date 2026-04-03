@@ -3,7 +3,8 @@ resource "random_id" "id" {
 }
 
 resource "aws_s3_bucket" "frontend" {
-  bucket = "${var.project_name}-frontend-${random_id.id.hex}"
+  bucket        = "${var.project_name}-frontend-${random_id.id.hex}"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket_website_configuration" "frontend" {

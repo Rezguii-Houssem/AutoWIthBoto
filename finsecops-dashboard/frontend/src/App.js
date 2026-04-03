@@ -3,6 +3,7 @@ import './App.css';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import { GridBackground } from './components/ui/GridBackground';
+import ResourceScannerDashboard from './components/ResourceScannerDashboard';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -92,10 +93,17 @@ function App() {
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
-      
       <div className="main-layout-dashboard">
         <div className="main-content">
-          <Dashboard activeTab={activeTab} token={token} />
+          {activeTab === 'dashboard' && <Dashboard activeTab={activeTab} token={token} />}
+          {activeTab === 'scans' && <ResourceScannerDashboard token={token} />}
+          {/* Add basic placeholders for others */}
+          {activeTab !== 'dashboard' && activeTab !== 'scans' && (
+            <div style={{ padding: '20px', color: '#fff' }}>
+              <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h2>
+              <p>Under construction...</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

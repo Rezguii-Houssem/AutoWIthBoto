@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
 
 const poolData = {
-  UserPoolId: 'YOUR_USER_POOL_ID', // User should replace this
-  ClientId: 'YOUR_CLIENT_ID'       // User should replace this
+  UserPoolId: process.env.REACT_APP_COGNITO_USER_POOL_ID || 'YOUR_USER_POOL_ID',
+  ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID || 'YOUR_CLIENT_ID'
 };
 
 const userPool = new CognitoUserPool(poolData);
