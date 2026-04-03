@@ -42,6 +42,7 @@ def main():
     lambda_configs = [
         ("finops/get_idle_ec2", "get_idle_ec2.zip"),
         ("finops/get_unattached_ebs", "get_unattached_ebs.zip"),
+        ("finops/scan_services", "scan_services.zip"),
         ("secops/check_s3_public", "check_s3_public.zip"),
         ("secops/check_sg_open", "check_sg_open.zip"),
         ("ses_notifier", "ses_notifier.zip"),

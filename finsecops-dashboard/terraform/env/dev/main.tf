@@ -53,8 +53,8 @@ module "get_idle_ec2" {
   route_key             = "GET /finops/ec2/idle"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = "../../builds/get_idle_ec2.zip"
-  source_code_hash      = filebase64sha256("../../builds/get_idle_ec2.zip")
+  filename              = "../../../builds/get_idle_ec2.zip"
+  source_code_hash      = filebase64sha256("../../../builds/get_idle_ec2.zip")
 }
 
 module "get_unattached_ebs" {
@@ -66,8 +66,8 @@ module "get_unattached_ebs" {
   route_key             = "GET /finops/ebs/unattached"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = "../../builds/get_unattached_ebs.zip"
-  source_code_hash      = filebase64sha256("../../builds/get_unattached_ebs.zip")
+  filename              = "../../../builds/get_unattached_ebs.zip"
+  source_code_hash      = filebase64sha256("../../../builds/get_unattached_ebs.zip")
 }
 
 module "check_s3_public" {
@@ -79,8 +79,8 @@ module "check_s3_public" {
   route_key             = "GET /secops/s3"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = "../../builds/check_s3_public.zip"
-  source_code_hash      = filebase64sha256("../../builds/check_s3_public.zip")
+  filename              = "../../../builds/check_s3_public.zip"
+  source_code_hash      = filebase64sha256("../../../builds/check_s3_public.zip")
 }
 
 module "check_sg_open" {
@@ -92,8 +92,8 @@ module "check_sg_open" {
   route_key             = "GET /secops/sg"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = "../../builds/check_sg_open.zip"
-  source_code_hash      = filebase64sha256("../../builds/check_sg_open.zip")
+  filename              = "../../../builds/check_sg_open.zip"
+  source_code_hash      = filebase64sha256("../../../builds/check_sg_open.zip")
 }
 
 # Orchestration & Automation Lambdas
@@ -106,8 +106,8 @@ module "ses_notifier" {
   route_key             = "POST /automation/scan/manual"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = "../../builds/ses_notifier.zip"
-  source_code_hash      = filebase64sha256("../../builds/ses_notifier.zip")
+  filename              = "../../../builds/ses_notifier.zip"
+  source_code_hash      = filebase64sha256("../../../builds/ses_notifier.zip")
 }
 
 module "toggle_scheduler" {
@@ -121,8 +121,8 @@ module "toggle_scheduler" {
   environment_variables = {
     RULE_NAME = module.automation.rule_name
   }
-  filename         = "../../builds/toggle_scheduler.zip"
-  source_code_hash = filebase64sha256("../../builds/toggle_scheduler.zip")
+  filename         = "../../../builds/toggle_scheduler.zip"
+  source_code_hash = filebase64sha256("../../../builds/toggle_scheduler.zip")
 }
 
 module "automation" {
@@ -143,8 +143,8 @@ module "scan_services" {
   route_key             = "GET /finops/scan"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
-  filename              = "../../builds/scan_services.zip"
-  source_code_hash      = filebase64sha256("../../builds/scan_services.zip")
+  filename              = "../../../builds/scan_services.zip"
+  source_code_hash      = filebase64sha256("../../../builds/scan_services.zip")
 }
 
 
