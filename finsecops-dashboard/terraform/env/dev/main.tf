@@ -4,8 +4,10 @@ module "iam" {
 }
 
 module "cognito" {
-  source       = "../../modules/cognito"
-  project_name = var.project_name
+  source               = "../../modules/cognito"
+  project_name         = var.project_name
+  google_client_id     = var.google_client_id
+  google_client_secret = var.google_client_secret
 }
 
 module "dynamodb" {

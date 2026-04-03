@@ -9,6 +9,21 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState(null);
+
+  useEffect(() => {
+    // Check for access token in URL hash (Cognito Implicit Grant)
+    const hash = window.location.hash;
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.substring(1));
+      const accessToken = params.get('access_token');
+      if (accessToken) {
+        setToken(accessToken);
+        setIsLoggedIn(true);
+        // Clear hash
+        window.history.replaceState(null, null, ' ');
+      }
+    }
+  }, []);
   
   // Script to hide Spline watermark
   useEffect(() => {

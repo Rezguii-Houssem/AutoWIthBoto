@@ -9,3 +9,7 @@ output "client_id" {
 output "cognito_arn" {
   value = aws_cognito_user_pool.main.arn
 }
+
+output "cognito_domain" {
+  value = aws_cognito_user_pool_domain.main.domain
+}

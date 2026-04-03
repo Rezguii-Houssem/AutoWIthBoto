@@ -7,3 +7,11 @@ variable "project_name" {
   type    = string
   default = "autowithboto"
 }
+
+variable "google_client_id" {
+  type    = string
+}
+
+variable "google_client_secret" {
+  type    = string
+}

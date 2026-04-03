@@ -10,6 +10,10 @@ output "cognito_client_id" {
   value = module.cognito.client_id
 }
 
+output "cognito_domain" {
+  value = module.cognito.cognito_domain
+}
+
 output "s3_frontend_bucket_id" {
   value = module.s3_frontend.bucket_id
 }
