@@ -16,13 +16,20 @@ def get_dir_hash(directory):
                     sha256_hash.update(data)
     return sha256_hash.hexdigest()
 
-def package_lambda(src_dir, dest_file):
+def package_lambda(src_dir, dest_file, shared_dir=None):
     with zipfile.ZipFile(dest_file, "w", zipfile.ZIP_DEFLATED) as zipf:
         for root, dirs, files in os.walk(src_dir):
             for file in files:
                 abs_path = os.path.join(root, file)
                 rel_path = os.path.relpath(abs_path, src_dir)
                 zipf.write(abs_path, rel_path)
+                
+        if shared_dir and os.path.exists(shared_dir):
+            for root, dirs, files in os.walk(shared_dir):
+                for file in files:
+                    abs_path = os.path.join(root, file)
+                    rel_path = os.path.join("shared", os.path.relpath(abs_path, shared_dir))
+                    zipf.write(abs_path, rel_path)
 
 def main():
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +48,8 @@ def main():
         ("toggle_scheduler", "toggle_scheduler.zip"),
     ]
 
+    shared_dir = os.path.join(lambdas_src, "shared")
+    
     print("--- Packaging Lambdas ---")
     for src_rel, zip_name in lambda_configs:
         src_path = os.path.join(lambdas_src, src_rel)
@@ -48,7 +57,7 @@ def main():
         
         if os.path.exists(src_path):
             print(f"Packaging {src_rel} -> {zip_name}...")
-            package_lambda(src_path, dest_path)
+            package_lambda(src_path, dest_path, shared_dir=shared_dir)
         else:
             print(f"WARNING: Source path {src_path} not found!")
 
