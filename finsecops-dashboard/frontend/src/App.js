@@ -19,8 +19,8 @@ function App() {
       if (accessToken) {
         setToken(accessToken);
         setIsLoggedIn(true);
-        // Clear hash
-        window.history.replaceState(null, null, ' ');
+        // Clear hash AND potentially the callback path if redirecting from OIDC
+        window.history.replaceState(null, null, '/');
       }
     }
   }, []);

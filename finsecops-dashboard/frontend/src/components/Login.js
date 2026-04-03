@@ -11,7 +11,7 @@ const userPool = new CognitoUserPool(poolData);
 
 const cognitoDomain = process.env.REACT_APP_COGNITO_DOMAIN || '';
 const region = process.env.REACT_APP_AWS_REGION || 'eu-west-3';
-const redirectUri = window.location.origin + '/';
+const redirectUri = window.location.origin + '/authorize2identity_provider';
 
 const Login = ({ onLoginSuccess }) => {
   const [isSignUp, setIsSignUp] = useState(false);

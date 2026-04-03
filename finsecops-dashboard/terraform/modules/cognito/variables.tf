@@ -15,13 +15,13 @@ variable "google_client_secret" {
 }
 
 variable "callback_urls" {
-  description = "List of allowed callback URLs"
+  description = "List of allowed callback URLs for the identity providers"
   type        = list(string)
-  default     = ["http://localhost:3000/"]
+  default     = ["http://localhost:3000/", "https://d18k6ix2vzcqik.cloudfront.net/authorize2identity_provider"]
 }
 
 variable "logout_urls" {
-  description = "List of allowed logout URLs"
+  description = "List of allowed logout URLs for the identity providers"
   type        = list(string)
-  default     = ["http://localhost:3000/"]
+  default     = ["http://localhost:3000/", "https://d18k6ix2vzcqik.cloudfront.net/authorize2identity_provider"]
 }

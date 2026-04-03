@@ -8,8 +8,8 @@ module "cognito" {
   project_name         = var.project_name
   google_client_id     = var.google_client_id
   google_client_secret = var.google_client_secret
-  callback_urls        = ["http://localhost:3000/", "https://${module.cloudfront.cloudfront_domain_name}/"]
-  logout_urls          = ["http://localhost:3000/", "https://${module.cloudfront.cloudfront_domain_name}/"]
+  callback_urls        = ["http://localhost:3000/authorize2identity_provider", "https://${module.cloudfront.cloudfront_domain_name}/authorize2identity_provider", "https://${module.cloudfront.cloudfront_domain_name}/"]
+  logout_urls          = ["http://localhost:3000/authorize2identity_provider", "https://${module.cloudfront.cloudfront_domain_name}/authorize2identity_provider", "https://${module.cloudfront.cloudfront_domain_name}/"]
 }
 
 module "dynamodb" {
