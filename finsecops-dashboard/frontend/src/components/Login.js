@@ -24,7 +24,7 @@ const Login = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleLogin = () => {
-    const url = `https://${cognitoDomain}.auth.${region}.amazoncognito.com/oauth2/authorize?identity_provider=Google&redirect_uri=${redirectUri}&response_type=token&client_id=${poolData.ClientId}&scope=email+openid+profile`;
+    const url = `https://${cognitoDomain}.auth.${region}.amazoncognito.com/oauth2/authorize?identity_provider=Google&redirect_uri=${redirectUri}&response_type=token&client_id=${poolData.ClientId}&scope=email+openid+profile&prompt=select_account`;
     window.location.href = url;
   };
 

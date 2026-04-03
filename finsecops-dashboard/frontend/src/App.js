@@ -51,6 +51,14 @@ function App() {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setToken(null);
+
+    // Redirect to Cognito's logout endpoint to clear the server-side session
+    const cognitoDomain = process.env.REACT_APP_COGNITO_DOMAIN || '';
+    const region = process.env.REACT_APP_AWS_REGION || 'eu-west-3';
+    const clientId = process.env.REACT_APP_COGNITO_CLIENT_ID || '';
+    const logoutUri = window.location.origin + '/';
+    const logoutUrl = `https://${cognitoDomain}.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+    window.location.href = logoutUrl;
   };
 
   const tabs = [

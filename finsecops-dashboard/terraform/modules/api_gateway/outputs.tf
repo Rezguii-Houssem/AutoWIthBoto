@@ -3,7 +3,7 @@ output "api_id" {
 }
 
 output "api_endpoint" {
-  value = aws_apigatewayv2_api.main.api_endpoint
+  value = "${aws_apigatewayv2_api.main.api_endpoint}/${aws_apigatewayv2_stage.dev.name}"
 }
 
 output "authorizer_id" {
