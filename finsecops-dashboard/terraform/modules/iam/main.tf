@@ -45,7 +45,7 @@ resource "aws_iam_policy" "lambda_policy" {
           "events:DisableRule",
           "ce:GetCostAndUsageWithResources",
           "ce:GetCostAndUsage",
-          "tagging:GetResources"
+          "tag:GetResources"
         ]
         Resource = "*"
       }
