@@ -14,9 +14,6 @@ resource "aws_lambda_function" "func" {
 
   timeout       = 30
 
-  lifecycle {
-    ignore_changes = [filename]
-  }
 }
 
 resource "aws_apigatewayv2_integration" "lambda" {

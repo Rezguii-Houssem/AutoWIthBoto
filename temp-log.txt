@@ -1,0 +1,309 @@
+deploy	Package & Deploy	﻿2026-04-03T17:02:29.3216516Z ##[group]Run python scripts/deploy.py
+deploy	Package & Deploy	2026-04-03T17:02:29.3217208Z [36;1mpython scripts/deploy.py[0m
+deploy	Package & Deploy	2026-04-03T17:02:29.3333023Z shell: /usr/bin/bash -e {0}
+deploy	Package & Deploy	2026-04-03T17:02:29.3333469Z env:
+deploy	Package & Deploy	2026-04-03T17:02:29.3333741Z   AWS_ACCESS_KEY_ID: ***
+deploy	Package & Deploy	2026-04-03T17:02:29.3334078Z   AWS_SECRET_ACCESS_KEY: ***
+deploy	Package & Deploy	2026-04-03T17:02:29.3334346Z   AWS_DEFAULT_REGION: eu-west-3
+deploy	Package & Deploy	2026-04-03T17:02:29.3334841Z   TF_VAR_google_client_id: ***
+deploy	Package & Deploy	2026-04-03T17:02:29.3335180Z   TF_VAR_google_client_secret: ***
+deploy	Package & Deploy	2026-04-03T17:02:29.3335496Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+deploy	Package & Deploy	2026-04-03T17:02:29.3335915Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+deploy	Package & Deploy	2026-04-03T17:02:29.3336332Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+deploy	Package & Deploy	2026-04-03T17:02:29.3336902Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+deploy	Package & Deploy	2026-04-03T17:02:29.3337278Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+deploy	Package & Deploy	2026-04-03T17:02:29.3337657Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+deploy	Package & Deploy	2026-04-03T17:02:29.3338012Z ##[endgroup]
+deploy	Package & Deploy	2026-04-03T17:02:29.9047642Z --- Packaging Lambdas ---
+deploy	Package & Deploy	2026-04-03T17:02:29.9048434Z Packaging finops/get_idle_ec2 -> get_idle_ec2.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9049393Z Packaging finops/get_unattached_ebs -> get_unattached_ebs.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9050216Z Packaging finops/scan_services -> scan_services.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9050995Z Packaging secops/check_s3_public -> check_s3_public.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9051729Z Packaging secops/check_sg_open -> check_sg_open.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9052453Z Packaging ses_notifier -> ses_notifier.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9053254Z Packaging toggle_scheduler -> toggle_scheduler.zip...
+deploy	Package & Deploy	2026-04-03T17:02:29.9054045Z Success! All Lambdas packaged in /builds directory.
+deploy	Package & Deploy	2026-04-03T17:02:29.9280294Z [0m[1mInitializing the backend...[0m
+deploy	Package & Deploy	2026-04-03T17:02:31.1714634Z [0m[32m
+deploy	Package & Deploy	2026-04-03T17:02:31.1715754Z Successfully configured the backend "s3"! Terraform will automatically
+deploy	Package & Deploy	2026-04-03T17:02:31.1717739Z use this backend unless the backend configuration changes.[0m
+deploy	Package & Deploy	2026-04-03T17:02:32.3885185Z [0m[1mInitializing modules...[0m
+deploy	Package & Deploy	2026-04-03T17:02:32.3893160Z - api_gateway in ../../modules/api_gateway
+deploy	Package & Deploy	2026-04-03T17:02:32.3896244Z - automation in ../../modules/automation
+deploy	Package & Deploy	2026-04-03T17:02:32.3918066Z - check_s3_public in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3918748Z - check_sg_open in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3919362Z - cloudfront in ../../modules/cloudfront
+deploy	Package & Deploy	2026-04-03T17:02:32.3919932Z - cognito in ../../modules/cognito
+deploy	Package & Deploy	2026-04-03T17:02:32.3920484Z - dynamodb in ../../modules/dynamodb
+deploy	Package & Deploy	2026-04-03T17:02:32.3921092Z - get_idle_ec2 in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3923616Z - get_unattached_ebs in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3928103Z - iam in ../../modules/iam
+deploy	Package & Deploy	2026-04-03T17:02:32.3945940Z - s3_frontend in ../../modules/s3_frontend
+deploy	Package & Deploy	2026-04-03T17:02:32.3949276Z - scan_services in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3951088Z - ses in ../../modules/ses
+deploy	Package & Deploy	2026-04-03T17:02:32.3957155Z - ses_notifier in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3958965Z - toggle_scheduler in ../../modules/lambda
+deploy	Package & Deploy	2026-04-03T17:02:32.3995474Z [0m[1mInitializing provider plugins...[0m
+deploy	Package & Deploy	2026-04-03T17:02:32.3996414Z - Finding hashicorp/aws versions matching "~> 5.0"...
+deploy	Package & Deploy	2026-04-03T17:02:32.4929356Z - Finding hashicorp/random versions matching "~> 3.0"...
+deploy	Package & Deploy	2026-04-03T17:02:32.6492713Z - Installing hashicorp/random v3.8.1...
+deploy	Package & Deploy	2026-04-03T17:02:32.9470966Z - Installed hashicorp/random v3.8.1 (signed by HashiCorp)
+deploy	Package & Deploy	2026-04-03T17:02:33.0681571Z - Installing hashicorp/aws v5.100.0...
+deploy	Package & Deploy	2026-04-03T17:02:37.1641140Z - Installed hashicorp/aws v5.100.0 (signed by HashiCorp)
+deploy	Package & Deploy	2026-04-03T17:02:37.1642736Z Terraform has created a lock file [1m.terraform.lock.hcl[0m to record the provider
+deploy	Package & Deploy	2026-04-03T17:02:37.1644538Z selections it made above. Include this file in your version control repository
+deploy	Package & Deploy	2026-04-03T17:02:37.1646048Z so that Terraform can guarantee to make the same selections by default when
+deploy	Package & Deploy	2026-04-03T17:02:37.1647891Z you run "terraform init" in the future.[0m
+deploy	Package & Deploy	2026-04-03T17:02:37.1648318Z 
+deploy	Package & Deploy	2026-04-03T17:02:37.1648955Z [0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+deploy	Package & Deploy	2026-04-03T17:02:37.1649918Z [0m[32m
+deploy	Package & Deploy	2026-04-03T17:02:37.1650775Z You may now begin working with Terraform. Try running "terraform plan" to see
+deploy	Package & Deploy	2026-04-03T17:02:37.1652301Z any changes that are required for your infrastructure. All Terraform commands
+deploy	Package & Deploy	2026-04-03T17:02:37.1653227Z should now work.
+deploy	Package & Deploy	2026-04-03T17:02:37.1653504Z 
+deploy	Package & Deploy	2026-04-03T17:02:37.1654151Z If you ever set or change modules or backend configuration for Terraform,
+deploy	Package & Deploy	2026-04-03T17:02:37.1655146Z rerun this command to reinitialize your working directory. If you forget, other
+deploy	Package & Deploy	2026-04-03T17:02:37.1656320Z commands will detect it and remind you to do so if necessary.[0m
+deploy	Package & Deploy	2026-04-03T17:02:39.3056215Z Acquiring state lock. This may take a few moments...
+deploy	Package & Deploy	2026-04-03T17:02:41.7020516Z [0m[1mmodule.cognito.random_string.domain_suffix: Refreshing state... [id=xgz5wgcp][0m
+deploy	Package & Deploy	2026-04-03T17:02:41.7022389Z [0m[1mmodule.s3_frontend.random_id.id: Refreshing state... [id=dkXr5Q][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3712012Z [0m[1mmodule.cloudfront.aws_cloudfront_origin_access_control.oac: Refreshing state... [id=E2FH9TGNQHKFIF][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3721753Z [0m[1mmodule.dynamodb.aws_dynamodb_table.results: Refreshing state... [id=autowithboto_ScanResults][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3724143Z [0m[1mmodule.s3_frontend.aws_s3_bucket.frontend: Refreshing state... [id=autowithboto-frontend-7645ebe5][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3729801Z [0m[1mmodule.ses.aws_ses_email_identity.notifier: Refreshing state... [id=rezguii.houssem@gmail.com][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3735132Z [0m[1mmodule.automation.aws_cloudwatch_event_rule.daily_scan: Refreshing state... [id=autowithboto-daily-scan][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3738311Z [0m[1mmodule.iam.aws_iam_policy.lambda_policy: Refreshing state... [id=arn:aws:iam::957411488704:policy/autowithboto_lambda_policy][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3765783Z [0m[1mmodule.api_gateway.aws_apigatewayv2_api.main: Refreshing state... [id=amb00lakyk][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3767799Z [0m[1mmodule.cognito.aws_cognito_user_pool.main: Refreshing state... [id=eu-west-3_H3eQQuAql][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.3769484Z [0m[1mmodule.iam.aws_iam_role.lambda_role: Refreshing state... [id=autowithboto_lambda_role][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.7899761Z [0m[1mmodule.iam.aws_iam_role_policy_attachment.lambda_attach: Refreshing state... [id=autowithboto_lambda_role-20260403131024283800000001][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.7901953Z [0m[1mmodule.check_s3_public.aws_lambda_function.func: Refreshing state... [id=checkS3Public][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.7903519Z [0m[1mmodule.get_unattached_ebs.aws_lambda_function.func: Refreshing state... [id=getUnattachedEBS][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.7904763Z [0m[1mmodule.get_idle_ec2.aws_lambda_function.func: Refreshing state... [id=getIdleEC2][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.8432264Z [0m[1mmodule.ses_notifier.aws_lambda_function.func: Refreshing state... [id=sesNotifier][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.8683597Z [0m[1mmodule.scan_services.aws_lambda_function.func: Refreshing state... [id=scanServices][0m
+deploy	Package & Deploy	2026-04-03T17:02:42.9325776Z [0m[1mmodule.check_sg_open.aws_lambda_function.func: Refreshing state... [id=checkSGOpen][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.1053185Z [0m[1mmodule.api_gateway.aws_apigatewayv2_stage.dev: Refreshing state... [id=dev][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.2517487Z [0m[1mmodule.cognito.aws_cognito_user_pool_domain.main: Refreshing state... [id=autowithboto-xgz5wgcp][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.4366073Z [0m[1mmodule.toggle_scheduler.aws_lambda_function.func: Refreshing state... [id=toggleScheduler][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.6209208Z [0m[1mmodule.ses_notifier.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.6211123Z [0m[1mmodule.get_unattached_ebs.aws_apigatewayv2_integration.lambda: Refreshing state... [id=mbxhaw8][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.6212795Z [0m[1mmodule.ses_notifier.aws_apigatewayv2_integration.lambda: Refreshing state... [id=cyybsen][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.6215216Z [0m[1mmodule.automation.aws_lambda_permission.allow_eventbridge: Refreshing state... [id=AllowExecutionFromEventBridge][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.6686360Z [0m[1mmodule.get_unattached_ebs.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.7380560Z [0m[1mmodule.automation.aws_cloudwatch_event_target.notifier: Refreshing state... [id=autowithboto-daily-scan-SESNotifier][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.7397903Z [0m[1mmodule.check_sg_open.aws_apigatewayv2_integration.lambda: Refreshing state... [id=fk76sis][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.7475560Z [0m[1mmodule.check_sg_open.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.7681050Z [0m[1mmodule.get_idle_ec2.aws_apigatewayv2_integration.lambda: Refreshing state... [id=c8hqzvs][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.7689888Z [0m[1mmodule.get_idle_ec2.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.8144935Z [0m[1mmodule.check_s3_public.aws_apigatewayv2_integration.lambda: Refreshing state... [id=nsctlwh][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.8448567Z [0m[1mmodule.check_s3_public.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.8471429Z [0m[1mmodule.scan_services.aws_apigatewayv2_integration.lambda: Refreshing state... [id=fxzce4i][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.8940247Z [0m[1mmodule.scan_services.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.9756365Z [0m[1mmodule.toggle_scheduler.aws_lambda_permission.api_gw: Refreshing state... [id=AllowExecutionFromAPIGateway][0m
+deploy	Package & Deploy	2026-04-03T17:02:43.9761510Z [0m[1mmodule.toggle_scheduler.aws_apigatewayv2_integration.lambda: Refreshing state... [id=5ghv51b][0m
+deploy	Package & Deploy	2026-04-03T17:02:44.7149546Z [0m[1mmodule.s3_frontend.aws_s3_bucket_public_access_block.frontend: Refreshing state... [id=autowithboto-frontend-7645ebe5][0m
+deploy	Package & Deploy	2026-04-03T17:02:44.7158873Z [0m[1mmodule.s3_frontend.aws_s3_bucket_website_configuration.frontend: Refreshing state... [id=autowithboto-frontend-7645ebe5][0m
+deploy	Package & Deploy	2026-04-03T17:02:44.7194641Z [0m[1mmodule.cloudfront.aws_cloudfront_distribution.main: Refreshing state... [id=E11IYQOAXAYF8X][0m
+deploy	Package & Deploy	2026-04-03T17:02:44.9366078Z [0m[1mmodule.cloudfront.aws_s3_bucket_policy.cloudfront_oac: Refreshing state... [id=autowithboto-frontend-7645ebe5][0m
+deploy	Package & Deploy	2026-04-03T17:02:44.9387497Z [0m[1mmodule.cognito.aws_cognito_user_pool_client.client: Refreshing state... [id=385b8f01mjv7adjenhsg0e1thu][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.1658037Z [0m[1mmodule.api_gateway.aws_apigatewayv2_authorizer.cognito: Refreshing state... [id=p6pokc][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3875567Z [0m[1mmodule.check_s3_public.aws_apigatewayv2_route.route: Refreshing state... [id=4e1o438][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3876944Z [0m[1mmodule.get_idle_ec2.aws_apigatewayv2_route.route: Refreshing state... [id=u0cww6p][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3877994Z [0m[1mmodule.toggle_scheduler.aws_apigatewayv2_route.route: Refreshing state... [id=928qzq2][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3879050Z [0m[1mmodule.scan_services.aws_apigatewayv2_route.route: Refreshing state... [id=0b0w22u][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3880036Z [0m[1mmodule.check_sg_open.aws_apigatewayv2_route.route: Refreshing state... [id=5rsp5xn][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3880963Z [0m[1mmodule.get_unattached_ebs.aws_apigatewayv2_route.route: Refreshing state... [id=ie60zgl][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.3881858Z [0m[1mmodule.ses_notifier.aws_apigatewayv2_route.route: Refreshing state... [id=b8ypvkp][0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8182584Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8183426Z Terraform used the selected providers to generate the following execution
+deploy	Package & Deploy	2026-04-03T17:02:45.8184430Z plan. Resource actions are indicated with the following symbols:
+deploy	Package & Deploy	2026-04-03T17:02:45.8185250Z   [32m+[0m create[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8185702Z   [33m~[0m update in-place[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8185982Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8186288Z Terraform will perform the following actions:
+deploy	Package & Deploy	2026-04-03T17:02:45.8187355Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8188074Z [1m  # module.check_s3_public.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8189347Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8189947Z         id                             = "checkS3Public"
+deploy	Package & Deploy	2026-04-03T17:02:45.8190946Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:04.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8192646Z       [33m~[0m[0m source_code_hash               = "iwT/wtNEVT9CG+J4ZzXI56jtYiwC1BGCkXOSOecHyr8=" [33m->[0m[0m "y4/ozo4ntrKBT1vbvtHuTK6d6s5BvAOKCdATHMT0tEU="
+deploy	Package & Deploy	2026-04-03T17:02:45.8193732Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8194197Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8194414Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8194604Z         [90m# (3 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8194891Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8194992Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8195363Z [1m  # module.check_sg_open.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8195956Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8196331Z         id                             = "checkSGOpen"
+deploy	Package & Deploy	2026-04-03T17:02:45.8197184Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:27.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8198155Z       [33m~[0m[0m source_code_hash               = "hf+YfQc/SJH+i6f3xs32EQGjDizFdzZizuoI2/Yl2VA=" [33m->[0m[0m "CKODkMuWcq8zFfGlRivknKQAcizajYBq2ie6vl80Y4s="
+deploy	Package & Deploy	2026-04-03T17:02:45.8198850Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8199225Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8199430Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8199613Z         [90m# (3 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8199872Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8199971Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8200324Z [1m  # module.cognito.aws_cognito_identity_provider.google[0][0m will be created
+deploy	Package & Deploy	2026-04-03T17:02:45.8200936Z [0m  [32m+[0m[0m resource "aws_cognito_identity_provider" "google" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8201351Z       [32m+[0m[0m attribute_mapping = {
+deploy	Package & Deploy	2026-04-03T17:02:45.8201695Z           [32m+[0m[0m "email"    = "email"
+deploy	Package & Deploy	2026-04-03T17:02:45.8202022Z           [32m+[0m[0m "username" = "sub"
+deploy	Package & Deploy	2026-04-03T17:02:45.8202263Z         }
+deploy	Package & Deploy	2026-04-03T17:02:45.8202565Z       [32m+[0m[0m id                = (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8202933Z       [32m+[0m[0m provider_details  = {
+deploy	Package & Deploy	2026-04-03T17:02:45.8203342Z           [32m+[0m[0m "authorize_scopes" = "email openid profile"
+deploy	Package & Deploy	2026-04-03T17:02:45.8203784Z           [32m+[0m[0m "client_id"        = (sensitive value)
+deploy	Package & Deploy	2026-04-03T17:02:45.8204193Z           [32m+[0m[0m "client_secret"    = (sensitive value)
+deploy	Package & Deploy	2026-04-03T17:02:45.8204471Z         }
+deploy	Package & Deploy	2026-04-03T17:02:45.8204744Z       [32m+[0m[0m provider_name     = "Google"
+deploy	Package & Deploy	2026-04-03T17:02:45.8205103Z       [32m+[0m[0m provider_type     = "Google"
+deploy	Package & Deploy	2026-04-03T17:02:45.8205505Z       [32m+[0m[0m user_pool_id      = "eu-west-3_H3eQQuAql"
+deploy	Package & Deploy	2026-04-03T17:02:45.8205796Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8205890Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8206288Z [1m  # module.cognito.aws_cognito_user_pool_client.client[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8207101Z [0m  [33m~[0m[0m resource "aws_cognito_user_pool_client" "client" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8207548Z         id                                            = "385b8f01mjv7adjenhsg0e1thu"
+deploy	Package & Deploy	2026-04-03T17:02:45.8207978Z         name                                          = "autowithboto-client"
+deploy	Package & Deploy	2026-04-03T17:02:45.8208460Z       [33m~[0m[0m supported_identity_providers                  = [
+deploy	Package & Deploy	2026-04-03T17:02:45.8208843Z           [32m+[0m[0m "Google",
+deploy	Package & Deploy	2026-04-03T17:02:45.8209189Z             [90m# (1 unchanged element hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8209464Z         ]
+deploy	Package & Deploy	2026-04-03T17:02:45.8209764Z         [90m# (18 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8210042Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8210143Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8210489Z [1m  # module.get_idle_ec2.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8211232Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8211700Z         id                             = "getIdleEC2"
+deploy	Package & Deploy	2026-04-03T17:02:45.8212257Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:42.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8213217Z       [33m~[0m[0m source_code_hash               = "DFrz2YU+MhH4M6JfTseS18B6CwgT5fo8MIbjbQFnx18=" [33m->[0m[0m "jVcTUEj14qi47/im4im4qmxPLgKu/7P+/r4VUMDONH8="
+deploy	Package & Deploy	2026-04-03T17:02:45.8213867Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8214238Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8214442Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8214624Z         [90m# (3 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8214883Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8214976Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8215343Z [1m  # module.get_unattached_ebs.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8215921Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8216285Z         id                             = "getUnattachedEBS"
+deploy	Package & Deploy	2026-04-03T17:02:45.8216980Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:10.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8217939Z       [33m~[0m[0m source_code_hash               = "zNVUUxx32tR+2+96MTnCUz+r5HLpJ8Y+ItvOhOXqfgs=" [33m->[0m[0m "8AVpIlPgd1rOc5oFXtCGsvjdwo2C+4NJ9IIrfgVNqr4="
+deploy	Package & Deploy	2026-04-03T17:02:45.8218592Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8218954Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8219231Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8219408Z         [90m# (3 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8219710Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8219809Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8220159Z [1m  # module.scan_services.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8220708Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8221063Z         id                             = "scanServices"
+deploy	Package & Deploy	2026-04-03T17:02:45.8221603Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:22.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8222557Z       [33m~[0m[0m source_code_hash               = "y9zd7Uqsb4aOZ9fAiOa6Tx3GD9lrZn7kyu2PFcqbLNk=" [33m->[0m[0m "C70tB64EoUnbAnSelPIzcqIf1fr+TOFDOcL/LtRbpHU="
+deploy	Package & Deploy	2026-04-03T17:02:45.8223206Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8223565Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8223763Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8223950Z         [90m# (3 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8224208Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8224299Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8224648Z [1m  # module.ses_notifier.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8225188Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8225536Z         id                             = "sesNotifier"
+deploy	Package & Deploy	2026-04-03T17:02:45.8226075Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:16.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8228302Z       [33m~[0m[0m source_code_hash               = "lNCF6htaYBjlQJARreU7oDQMyWIZMd6Uk1DBWJZTDAY=" [33m->[0m[0m "cxA01unG9EzC5EixsYEanFFmFQOLuw0gorZWcTb2MxA="
+deploy	Package & Deploy	2026-04-03T17:02:45.8229357Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8229981Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8230223Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8230420Z         [90m# (3 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8230690Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8230793Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8231173Z [1m  # module.toggle_scheduler.aws_lambda_function.func[0m will be updated in-place
+deploy	Package & Deploy	2026-04-03T17:02:45.8231746Z [0m  [33m~[0m[0m resource "aws_lambda_function" "func" {
+deploy	Package & Deploy	2026-04-03T17:02:45.8232121Z         id                             = "toggleScheduler"
+deploy	Package & Deploy	2026-04-03T17:02:45.8232687Z       [33m~[0m[0m last_modified                  = "2026-04-03T16:50:35.000+0000" -> (known after apply)
+deploy	Package & Deploy	2026-04-03T17:02:45.8233853Z       [33m~[0m[0m source_code_hash               = "vgTY7TJuIbcfJLdjidliWGm37xzgT9C0iGRWhCI5QhU=" [33m->[0m[0m "fgj/6h0u5PL+7beRVDGh+PY2xJuyCvPf3XTeumUKe0U="
+deploy	Package & Deploy	2026-04-03T17:02:45.8234627Z         tags                           = {}
+deploy	Package & Deploy	2026-04-03T17:02:45.8235008Z         [90m# (27 unchanged attributes hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8235217Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8235401Z         [90m# (4 unchanged blocks hidden)[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:45.8235667Z     }
+deploy	Package & Deploy	2026-04-03T17:02:45.8235763Z 
+deploy	Package & Deploy	2026-04-03T17:02:45.8235995Z [1mPlan:[0m [0m1 to add, 8 to change, 0 to destroy.
+deploy	Package & Deploy	2026-04-03T17:02:46.6828492Z [0m[1mmodule.cognito.aws_cognito_identity_provider.google[0]: Creating...[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.6895824Z [0m[1mmodule.scan_services.aws_lambda_function.func: Modifying... [id=scanServices][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.6899300Z [0m[1mmodule.get_unattached_ebs.aws_lambda_function.func: Modifying... [id=getUnattachedEBS][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.6902935Z [0m[1mmodule.toggle_scheduler.aws_lambda_function.func: Modifying... [id=toggleScheduler][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.6931157Z [0m[1mmodule.get_idle_ec2.aws_lambda_function.func: Modifying... [id=getIdleEC2][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.6962181Z [0m[1mmodule.ses_notifier.aws_lambda_function.func: Modifying... [id=sesNotifier][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.6995000Z [0m[1mmodule.check_s3_public.aws_lambda_function.func: Modifying... [id=checkS3Public][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:46.7007207Z [0m[1mmodule.check_sg_open.aws_lambda_function.func: Modifying... [id=checkSGOpen][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:47.6511690Z [0m[1mmodule.cognito.aws_cognito_identity_provider.google[0]: Creation complete after 1s [id=eu-west-3_H3eQQuAql:Google][0m
+deploy	Package & Deploy	2026-04-03T17:02:47.6695364Z [0m[1mmodule.cognito.aws_cognito_user_pool_client.client: Modifying... [id=385b8f01mjv7adjenhsg0e1thu][0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:48.0645073Z [0m[1mmodule.cognito.aws_cognito_user_pool_client.client: Modifications complete after 0s [id=385b8f01mjv7adjenhsg0e1thu][0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0572837Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0574538Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/get_unattached_ebs.zip): open ../../builds/get_unattached_ebs.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0576164Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0577114Z [31m│[0m [0m[0m  with module.get_unattached_ebs.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0578306Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0579150Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0579881Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0580215Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0580432Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0581429Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/get_idle_ec2.zip): open ../../builds/get_idle_ec2.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0582085Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0582687Z [31m│[0m [0m[0m  with module.get_idle_ec2.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0583785Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0584531Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0585063Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0585299Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0585490Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0586624Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/check_s3_public.zip): open ../../builds/check_s3_public.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0587346Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0587890Z [31m│[0m [0m[0m  with module.check_s3_public.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0589026Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0590322Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0590684Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0591118Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0591481Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0592458Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/ses_notifier.zip): open ../../builds/ses_notifier.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0593400Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0594011Z [31m│[0m [0m[0m  with module.ses_notifier.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0594688Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0595516Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0595868Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0596182Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0596479Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0597614Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/check_sg_open.zip): open ../../builds/check_sg_open.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0598495Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0599133Z [31m│[0m [0m[0m  with module.check_sg_open.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0599885Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0600634Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0600978Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0601364Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0601591Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0602874Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/toggle_scheduler.zip): open ../../builds/toggle_scheduler.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0603660Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0604172Z [31m│[0m [0m[0m  with module.toggle_scheduler.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0605017Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0605715Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0606066Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0606264Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0606455Z [31m╷[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0607451Z [31m│[0m [0m[1m[31mError: [0m[0m[1mreading ZIP file (../../builds/scan_services.zip): open ../../builds/scan_services.zip: no such file or directory[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0608104Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0608524Z [31m│[0m [0m[0m  with module.scan_services.aws_lambda_function.func,
+deploy	Package & Deploy	2026-04-03T17:02:49.0609199Z [31m│[0m [0m  on ../../modules/lambda/main.tf line 1, in resource "aws_lambda_function" "func":
+deploy	Package & Deploy	2026-04-03T17:02:49.0609815Z [31m│[0m [0m   1: resource "aws_lambda_function" "func" [4m{[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0610157Z [31m│[0m [0m
+deploy	Package & Deploy	2026-04-03T17:02:49.0610357Z [31m╵[0m[0m
+deploy	Package & Deploy	2026-04-03T17:02:49.3317591Z 
+deploy	Package & Deploy	2026-04-03T17:02:49.3318197Z --- Step 1: Packaging Lambdas ---
+deploy	Package & Deploy	2026-04-03T17:02:49.3319856Z Running: /opt/hostedtoolcache/Python/3.11.15/x64/bin/python /home/runner/work/AutoWIthBoto/AutoWIthBoto/finsecops-dashboard/scripts/package_lambdas.py
+deploy	Package & Deploy	2026-04-03T17:02:49.3347257Z 
+deploy	Package & Deploy	2026-04-03T17:02:49.3347552Z --- Step 2: Terraform Init ---
+deploy	Package & Deploy	2026-04-03T17:02:49.3348037Z Running: terraform init
+deploy	Package & Deploy	2026-04-03T17:02:49.3348282Z 
+deploy	Package & Deploy	2026-04-03T17:02:49.3348527Z --- Step 3: Terraform Apply ---
+deploy	Package & Deploy	2026-04-03T17:02:49.3349090Z Running: terraform apply -auto-approve
+deploy	Package & Deploy	2026-04-03T17:02:49.3349689Z Error: Command failed with exit code 1
+deploy	Package & Deploy	2026-04-03T17:02:49.3385334Z ##[error]Process completed with exit code 1.
