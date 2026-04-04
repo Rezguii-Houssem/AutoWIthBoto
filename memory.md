@@ -27,7 +27,9 @@
 - Never commit `.env`, `.tmp/`, `credentials.json`, or `token.json`
 - Always check `execution/` before writing a new script
 - Python scripts should be deterministic and well-commented
-- Temporary files go in `.tmp/` - can be deleted anytime
+- Temporary files (logs, debug outputs) MUST be deleted immediately after use.
+- GitHub Workflows MUST reside in the root `.github/workflows/` directory.
+- Avoid committing `temp*` files or redundant configuration folders.
 
 ## Successful Patterns
 
@@ -45,4 +47,6 @@
 
 - Always whitelist the CloudFront domain in Cognito *before* the first deployment attempt.
 - HTTP APIs in AWS require manual CORS configuration even if the backend handles it.
-- Terraform modules should handle optional providers gracefully to support local testing without full secrets.
+- Terraform modules should handle optional providers gracefully.
+- **Hygiene**: Always clean up temporary troubleshooting logs (`temp-log.txt`) or scratch files before concluding a task.
+- **GitHub Actions**: Workflows in subdirectories are ignored; keep the primary deployment logic in the root `.github/workflows/` folder.
