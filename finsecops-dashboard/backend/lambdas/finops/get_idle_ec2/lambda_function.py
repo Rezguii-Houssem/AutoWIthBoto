@@ -69,6 +69,7 @@ def lambda_handler(event, context):
 
         # Upload logs to S3 before finishing
         try:
+            logger.info(f"Scan complete. Found {len(idle_instances)} idle instances.")
             upload_logs_to_s3(log_bucket, session)
         except Exception as e:
             logger.error(f"Failed to upload logs to S3: {str(e)}")
@@ -77,4 +78,9 @@ def lambda_handler(event, context):
 
     except Exception as e:
         logger.error(f"Error in get_idle_ec2: {str(e)}")
+        try:
+            if 'log_bucket' in locals() and 'session' in locals():
+                upload_logs_to_s3(log_bucket, session)
+        except Exception:
+            pass
         return respond(500, {'error': str(e)})

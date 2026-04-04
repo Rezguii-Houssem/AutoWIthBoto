@@ -82,33 +82,42 @@ def lambda_handler(event, context):
         try:
             logger.info(f"Fetching account-wide cost data from Cost Explorer ({start_date} to {end_date})...")
             
-            # MANDATORY: get_cost_and_usage requires a Filter when grouping by RESOURCE_ID 
-            # if resource-level cost tracking is not enabled for all items globally.
-            # We use a broad filter that excludes nothing (or excludes specific record types) to satisfy the API.
-            cost_response = ce.get_cost_and_usage(
-                TimePeriod={'Start': start_date, 'End': end_date},
-                Granularity='DAILY',
-                Metrics=['UnblendedCost'],
-                GroupBy=[
-                    {'Type': 'DIMENSION', 'Key': 'SERVICE'},
-                    {'Type': 'DIMENSION', 'Key': 'RESOURCE_ID'}
-                ],
-                Filter={
-                    'Not': {
-                        'Dimensions': {
-                            'Key': 'RECORD_TYPE',
-                            'Values': ['Credit', 'Refund'] # Common exclusion for real cost
+            # Use a helper to execute the query with fallback
+            def get_ce_data(group_by_resource=True):
+                group_by = [{'Type': 'DIMENSION', 'Key': 'SERVICE'}]
+                if group_by_resource:
+                    group_by.append({'Type': 'DIMENSION', 'Key': 'RESOURCE_ID'})
+                
+                return ce.get_cost_and_usage(
+                    TimePeriod={'Start': start_date, 'End': end_date},
+                    Granularity='DAILY',
+                    Metrics=['UnblendedCost'],
+                    GroupBy=group_by,
+                    Filter={
+                        'Not': {
+                            'Dimensions': {
+                                'Key': 'RECORD_TYPE',
+                                'Values': ['Credit', 'Refund']
+                            }
                         }
                     }
-                }
-            )
-            
+                )
+
+            try:
+                cost_response = get_ce_data(group_by_resource=True)
+            except ce.exceptions.ValidationException as val_err:
+                if "RESOURCE_ID" in str(val_err) or "dimension is invalid" in str(val_err):
+                    logger.warning("RESOURCE_ID dimension is currently unavailable (likely pending 24h activation). Falling back to Service-level grouping.")
+                    cost_response = get_ce_data(group_by_resource=False)
+                else:
+                    raise val_err
+
             groups_found = 0
             for result_by_time in cost_response.get('ResultsByTime', []):
                 for group in result_by_time.get('Groups', []):
-                    # Keys are [Service, ResourceID]
+                    # Keys are [Service] or [Service, ResourceID]
                     service_name = group['Keys'][0]
-                    resource_id = group['Keys'][1]
+                    resource_id = group['Keys'][1] if len(group['Keys']) > 1 else f"Service:{service_name}"
                     amount = float(group['Metrics']['UnblendedCost']['Amount'])
                     
                     if amount <= 0 or resource_id == "NoResourceId":
@@ -120,8 +129,6 @@ def lambda_handler(event, context):
                     if resource_id in resource_data:
                         target_key = resource_id
                     else:
-                        # Try to find a partial match (e.g. ID in ARN) or ID match
-                        # Many resources in CE are truncated or just the ID (e.g. i-123 instead of arn:...)
                         for arn_info in resource_data:
                             if resource_id in arn_info:
                                 target_key = arn_info
@@ -131,13 +138,12 @@ def lambda_handler(event, context):
                         resource_data[target_key]['Cost'] += amount
                         resource_data[target_key]['Status'] = 'Active'
                     else:
-                        # Resource found in billing but not in live sweep (deleted, shared, or untaggable)
-                        # We still show it because it's costing money.
+                        # Resource found in billing but not in live sweep
                         resource_data[resource_id] = {
                             'ResourceId': resource_id,
-                            'Name': resource_id,
+                            'Name': resource_id if not resource_id.startswith("Service:") else service_name,
                             'Service': service_name.upper(),
-                            'Type': 'AWS Resource',
+                            'Type': 'AWS Resource' if not resource_id.startswith("Service:") else 'Service Group',
                             'Cost': amount,
                             'Currency': 'USD',
                             'Status': 'Historical/Untagged'
@@ -147,22 +153,17 @@ def lambda_handler(event, context):
             logger.warning(f"Cost Explorer error: {str(ce_err)}")
 
         # Filter and sort
-        # 1. Keep anything with Cost > 0
-        # 2. Keep 'Live' items discovered even if 0 cost (to show current status)
         final_list = [res for res in resource_data.values() if res['Cost'] > 0 or res['Status'] == 'Live']
         final_list = sorted(final_list, key=lambda x: x['Cost'], reverse=True)
 
-        # Upload logs with bucket verification
+        # Final Log upload
         if log_bucket:
             try:
                 # Check if bucket exists
                 s3.head_bucket(Bucket=log_bucket)
                 upload_logs_to_s3(log_bucket, session)
-                logger.info(f"Logs successfully uploaded to {log_bucket}")
             except Exception as e:
-                logger.error(f"Failed to upload logs to S3 bucket '{log_bucket}': {str(e)}")
-        else:
-            logger.warning("LOG_BUCKET environment variable not set, skipping log upload.")
+                logger.error(f"Failed to upload logs to S3: {str(e)}")
 
         return respond(200, {
             'resources': final_list,
@@ -172,5 +173,11 @@ def lambda_handler(event, context):
         })
 
     except Exception as e:
-        logger.error(f"Error in account-wide sweep: {str(e)}")
+        logger.error(f"Critical error in sweep: {str(e)}")
+        # Attempt one last log upload before failing
+        try:
+            if 'log_bucket' in locals() and 'session' in locals():
+                upload_logs_to_s3(log_bucket, session)
+        except Exception:
+            pass
         return respond(500, {'error': str(e)})

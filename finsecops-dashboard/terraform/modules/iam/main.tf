@@ -40,6 +40,7 @@ resource "aws_iam_policy" "lambda_policy" {
           "dynamodb:Scan",
           "s3:PutObject",
           "s3:GetBucketLocation",
+          "s3:ListBucket",
           "ses:SendEmail",
           "lambda:InvokeFunction",
           "events:EnableRule",
