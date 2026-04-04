@@ -43,7 +43,9 @@ resource "aws_iam_policy" "lambda_policy" {
           "lambda:InvokeFunction",
           "events:EnableRule",
           "events:DisableRule",
-          "ce:GetCostAndUsageWithResources"
+          "ce:GetCostAndUsageWithResources",
+          "ce:GetCostAndUsage",
+          "tagging:GetResources"
         ]
         Resource = "*"
       }
