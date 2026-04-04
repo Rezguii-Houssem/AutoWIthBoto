@@ -27,13 +27,22 @@ const Dashboard = ({ token, activeTab }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setResults(response.data);
-      addLog('DONE', `Scan complete. Found ${response.data.count} items.`);
+      if (response.data.logs) {
+        // Filter out existing logs if we want a fresh view, or append
+        setLogs(prev => [...prev, ...response.data.logs]);
+      } else {
+        addLog('DONE', `Scan complete. Found ${response.data.count} items.`);
+      }
+      
       if (response.data.estimated_savings) {
         addLog('COST', `Potential Monthly Savings: $${response.data.estimated_savings}`);
       }
     } catch (error) {
       console.error("Scan failed", error);
       addLog('ERROR', `Scan failed: ${error.message}`);
+      if (error.response && error.response.data && error.response.data.logs) {
+        setLogs(prev => [...prev, ...error.response.data.logs]);
+      }
     }
     setLoading(false);
   };

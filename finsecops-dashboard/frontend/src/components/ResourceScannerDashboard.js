@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import Terminal from './Terminal';
 
 const API_ENDPOINT = process.env.REACT_APP_API_URL || "https://your-api-id.execute-api.eu-west-1.amazonaws.com/dev";
 
 const ResourceScannerDashboard = ({ token }) => {
   const [resources, setResources] = useState([]);
+  const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [days, setDays] = useState(7);
@@ -20,9 +22,15 @@ const ResourceScannerDashboard = ({ token }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       setResources(response.data.resources || []);
+      if (response.data.logs) {
+        setLogs(response.data.logs);
+      }
     } catch (err) {
       console.error("Scan failed", err);
       setError(err.message || "Failed to scan resources.");
+      if (err.response && err.response.data && err.response.data.logs) {
+        setLogs(err.response.data.logs);
+      }
     }
     setLoading(false);
   };
@@ -82,6 +90,8 @@ const ResourceScannerDashboard = ({ token }) => {
           <p style={{ color: 'rgba(255, 255, 255, 0.5)' }}>No data available. Run a scan to see resources.</p>
         )}
       </div>
+
+      <Terminal logs={logs} />
     </div>
   );
 };

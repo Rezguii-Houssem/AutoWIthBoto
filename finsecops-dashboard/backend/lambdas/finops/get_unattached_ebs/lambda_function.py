@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timezone, timedelta
-from shared.logger_setup import setup_logger, upload_logs_to_s3
+from shared.logger_setup import setup_logger, upload_logs_to_s3, reset_log_file
 from shared.utils import respond, get_boto_session
 
 logger = setup_logger()
@@ -8,6 +8,7 @@ logger = setup_logger()
 
 def lambda_handler(event, context):
     try:
+        reset_log_file()
         query_params = event.get('queryStringParameters', {})
 
         region = query_params.get('region', 'eu-west-3')

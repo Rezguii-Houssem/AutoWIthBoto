@@ -1,6 +1,7 @@
 import json
 import boto3
 from decimal import Decimal
+from .logger_setup import get_current_logs
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -9,6 +10,10 @@ class DecimalEncoder(json.JSONEncoder):
         return super(DecimalEncoder, self).default(obj)
 
 def respond(status_code, body):
+    # Automatically inject logs into the response body if it's a dict
+    if isinstance(body, dict):
+        body['logs'] = get_current_logs()
+        
     return {
         'statusCode': status_code,
         'headers': {

@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta, timezone
-from shared.logger_setup import setup_logger, upload_logs_to_s3
+from shared.logger_setup import setup_logger, upload_logs_to_s3, reset_log_file
 from shared.utils import respond, get_boto_session
 
 logger = setup_logger()
@@ -11,6 +11,7 @@ def lambda_handler(event, context):
     calculates their uptime, and attempts to fetch cost data from Cost Explorer.
     """
     try:
+        reset_log_file()
         query_params = event.get('queryStringParameters', {}) or {}
         region = query_params.get('region', 'eu-west-3')
         # Time window for Cost Explorer (default 7 days)

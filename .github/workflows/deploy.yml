@@ -2,7 +2,7 @@ name: AWS Infrastructure Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, feature ]
   workflow_dispatch: # Allows manual trigger
 
 jobs:
