@@ -30,6 +30,7 @@
 - Temporary files (logs, debug outputs) MUST be deleted immediately after use.
 - GitHub Workflows MUST reside in the root `.github/workflows/` directory.
 - Avoid committing `temp*` files or redundant configuration folders.
+- **Workflow**: All development and next pushes must happen on the `feature` branch. `main` is the corrected source of truth.
 
 ## Successful Patterns
 
