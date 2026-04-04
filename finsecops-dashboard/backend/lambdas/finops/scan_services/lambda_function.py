@@ -24,6 +24,7 @@ def lambda_handler(event, context):
         session = get_boto_session(query_params)
         tagging = session.client('resourcegroupstaggingapi', region_name=region)
         ce = session.client('ce', region_name='us-east-1')
+        s3 = session.client('s3')
 
         # Cost Explorer dates: End is exclusive
         end_date = datetime.now(timezone.utc).strftime('%Y-%m-%d')
@@ -81,8 +82,9 @@ def lambda_handler(event, context):
         try:
             logger.info(f"Fetching account-wide cost data from Cost Explorer ({start_date} to {end_date})...")
             
-            # Using get_cost_and_usage instead of get_cost_and_usage_with_resources
-            # as it's more flexible for whole-account queries.
+            # MANDATORY: get_cost_and_usage requires a Filter when grouping by RESOURCE_ID 
+            # if resource-level cost tracking is not enabled for all items globally.
+            # We use a broad filter that excludes nothing (or excludes specific record types) to satisfy the API.
             cost_response = ce.get_cost_and_usage(
                 TimePeriod={'Start': start_date, 'End': end_date},
                 Granularity='DAILY',
@@ -90,9 +92,18 @@ def lambda_handler(event, context):
                 GroupBy=[
                     {'Type': 'DIMENSION', 'Key': 'SERVICE'},
                     {'Type': 'DIMENSION', 'Key': 'RESOURCE_ID'}
-                ]
+                ],
+                Filter={
+                    'Not': {
+                        'Dimensions': {
+                            'Key': 'RECORD_TYPE',
+                            'Values': ['Credit', 'Refund'] # Common exclusion for real cost
+                        }
+                    }
+                }
             )
             
+            groups_found = 0
             for result_by_time in cost_response.get('ResultsByTime', []):
                 for group in result_by_time.get('Groups', []):
                     # Keys are [Service, ResourceID]
@@ -103,42 +114,51 @@ def lambda_handler(event, context):
                     if amount <= 0 or resource_id == "NoResourceId":
                         continue
 
+                    groups_found += 1
                     # Match by Resource ID or ARN
                     target_key = None
                     if resource_id in resource_data:
                         target_key = resource_id
                     else:
-                        # Try to find a partial match (e.g. ID in ARN)
-                        for arn in resource_data:
-                            if resource_id in arn:
-                                target_key = arn
+                        # Try to find a partial match (e.g. ID in ARN) or ID match
+                        # Many resources in CE are truncated or just the ID (e.g. i-123 instead of arn:...)
+                        for arn_info in resource_data:
+                            if resource_id in arn_info:
+                                target_key = arn_info
                                 break
                     
                     if target_key:
                         resource_data[target_key]['Cost'] += amount
                         resource_data[target_key]['Status'] = 'Active'
                     else:
-                        # Resource found in billing but not in live sweep (deleted or untaggable)
+                        # Resource found in billing but not in live sweep (deleted, shared, or untaggable)
+                        # We still show it because it's costing money.
                         resource_data[resource_id] = {
                             'ResourceId': resource_id,
                             'Name': resource_id,
                             'Service': service_name.upper(),
-                            'Type': 'Unknown/Untaggable',
+                            'Type': 'AWS Resource',
                             'Cost': amount,
                             'Currency': 'USD',
-                            'Status': 'Historical'
+                            'Status': 'Historical/Untagged'
                         }
+            logger.info(f"Processed {groups_found} cost groups from Cost Explorer.")
         except Exception as ce_err:
             logger.warning(f"Cost Explorer error: {str(ce_err)}")
 
-        # Filter out 0 cost items if they are "Historical" (noise cleanup)
+        # Filter and sort
+        # 1. Keep anything with Cost > 0
+        # 2. Keep 'Live' items discovered even if 0 cost (to show current status)
         final_list = [res for res in resource_data.values() if res['Cost'] > 0 or res['Status'] == 'Live']
         final_list = sorted(final_list, key=lambda x: x['Cost'], reverse=True)
 
-        # Upload logs
+        # Upload logs with bucket verification
         if log_bucket:
             try:
+                # Check if bucket exists
+                s3.head_bucket(Bucket=log_bucket)
                 upload_logs_to_s3(log_bucket, session)
+                logger.info(f"Logs successfully uploaded to {log_bucket}")
             except Exception as e:
                 logger.error(f"Failed to upload logs to S3 bucket '{log_bucket}': {str(e)}")
         else:

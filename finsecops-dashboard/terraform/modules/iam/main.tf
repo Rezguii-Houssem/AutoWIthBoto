@@ -39,13 +39,13 @@ resource "aws_iam_policy" "lambda_policy" {
           "dynamodb:GetItem",
           "dynamodb:Scan",
           "s3:PutObject",
+          "s3:GetBucketLocation",
           "ses:SendEmail",
           "lambda:InvokeFunction",
           "events:EnableRule",
           "events:DisableRule",
-          "ce:GetCostAndUsageWithResources",
-          "ce:GetCostAndUsage",
-          "tag:GetResources"
+          "ce:*",
+          "tag:*"
         ]
         Resource = "*"
       }
