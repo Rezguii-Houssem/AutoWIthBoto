@@ -22,6 +22,11 @@ module "s3_frontend" {
   project_name = var.project_name
 }
 
+module "s3_logs" {
+  source       = "../../modules/s3_logs"
+  project_name = var.project_name
+}
+
 module "api_gateway" {
   source            = "../../modules/api_gateway"
   project_name      = var.project_name
@@ -52,7 +57,9 @@ module "get_idle_ec2" {
   api_id                = module.api_gateway.api_id
   route_key             = "GET /finops/ec2/idle"
   authorizer_id         = module.api_gateway.authorizer_id
-  environment_variables = {}
+  environment_variables = {
+    LOG_BUCKET = module.s3_logs.bucket_id
+  }
   filename              = "../../../builds/get_idle_ec2.zip"
   source_code_hash      = filebase64sha256("../../../builds/get_idle_ec2.zip")
 }
@@ -65,7 +72,9 @@ module "get_unattached_ebs" {
   api_id                = module.api_gateway.api_id
   route_key             = "GET /finops/ebs/unattached"
   authorizer_id         = module.api_gateway.authorizer_id
-  environment_variables = {}
+  environment_variables = {
+    LOG_BUCKET = module.s3_logs.bucket_id
+  }
   filename              = "../../../builds/get_unattached_ebs.zip"
   source_code_hash      = filebase64sha256("../../../builds/get_unattached_ebs.zip")
 }
@@ -78,7 +87,9 @@ module "check_s3_public" {
   api_id                = module.api_gateway.api_id
   route_key             = "GET /secops/s3"
   authorizer_id         = module.api_gateway.authorizer_id
-  environment_variables = {}
+  environment_variables = {
+    LOG_BUCKET = module.s3_logs.bucket_id
+  }
   filename              = "../../../builds/check_s3_public.zip"
   source_code_hash      = filebase64sha256("../../../builds/check_s3_public.zip")
 }
@@ -91,7 +102,9 @@ module "check_sg_open" {
   api_id                = module.api_gateway.api_id
   route_key             = "GET /secops/sg"
   authorizer_id         = module.api_gateway.authorizer_id
-  environment_variables = {}
+  environment_variables = {
+    LOG_BUCKET = module.s3_logs.bucket_id
+  }
   filename              = "../../../builds/check_sg_open.zip"
   source_code_hash      = filebase64sha256("../../../builds/check_sg_open.zip")
 }
@@ -142,7 +155,9 @@ module "scan_services" {
   api_id                = module.api_gateway.api_id
   route_key             = "GET /finops/scan"
   authorizer_id         = module.api_gateway.authorizer_id
-  environment_variables = {}
+  environment_variables = {
+    LOG_BUCKET = module.s3_logs.bucket_id
+  }
   filename              = "../../../builds/scan_services.zip"
   source_code_hash      = filebase64sha256("../../../builds/scan_services.zip")
 }

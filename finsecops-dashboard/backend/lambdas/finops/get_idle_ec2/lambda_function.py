@@ -1,6 +1,6 @@
 import os
 from datetime import datetime, timedelta, timezone
-from shared.logger_setup import setup_logger, upload_logs_to_s3
+from shared.logger_setup import setup_logger, upload_logs_to_s3, reset_log_file
 from shared.utils import respond, get_boto_session
 
 logger = setup_logger()
@@ -21,6 +21,7 @@ def get_average_cpu(cw_client, instance_id, start_time, end_time):
 
 def lambda_handler(event, context):
     try:
+        reset_log_file()
         query_params = event.get('queryStringParameters', {})
         region = query_params.get('region', 'eu-west-3')
         tag_key = query_params.get('tag_key')
@@ -68,6 +69,7 @@ def lambda_handler(event, context):
 
         # Upload logs to S3 before finishing
         try:
+            logger.info(f"Scan complete. Found {len(idle_instances)} idle instances.")
             upload_logs_to_s3(log_bucket, session)
         except Exception as e:
             logger.error(f"Failed to upload logs to S3: {str(e)}")
@@ -76,4 +78,9 @@ def lambda_handler(event, context):
 
     except Exception as e:
         logger.error(f"Error in get_idle_ec2: {str(e)}")
+        try:
+            if 'log_bucket' in locals() and 'session' in locals():
+                upload_logs_to_s3(log_bucket, session)
+        except Exception:
+            pass
         return respond(500, {'error': str(e)})
