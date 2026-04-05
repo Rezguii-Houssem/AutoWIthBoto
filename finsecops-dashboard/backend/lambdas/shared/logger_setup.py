@@ -6,16 +6,29 @@ import os
 
 LOG_FILE_PATH = '/tmp/app.log'
 
+
 def setup_logger():
-    logger = logging.getLogger()
+    # Set the root logger to WARNING to avoid seeing all library INFO logs
+    logging.getLogger().setLevel(logging.WARNING)
+    
+    # Create or get our specific app logger
+    logger = logging.getLogger('AutoWithBoto')
     logger.setLevel(logging.INFO)
     
+    # Silence botocore and boto3 specifically just in case
+    logging.getLogger('botocore').setLevel(logging.WARNING)
+    logging.getLogger('boto3').setLevel(logging.WARNING)
+    logging.getLogger('urllib3').setLevel(logging.WARNING)
+
     # CloudWatch is automatic, but we can add more handles if needed
     # For AutoWithBoto, we'll log to /tmp/app.log as requested
     file_handler = logging.FileHandler(LOG_FILE_PATH)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(levelname)s: %(message)s') # Simplified for dashboard
     file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+    
+    # Avoid adding multiple handlers if already present
+    if not logger.handlers:
+        logger.addHandler(file_handler)
     
     return logger
 

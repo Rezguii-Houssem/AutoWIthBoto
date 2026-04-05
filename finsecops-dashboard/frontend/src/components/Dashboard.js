@@ -10,9 +10,7 @@ const API_ENDPOINT = process.env.REACT_APP_API_URL || "https://your-api-id.execu
 const Dashboard = ({ token, activeTab }) => {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [logs, setLogs] = useState([
-    { type: 'INFO', message: 'Initializing AWS Session (AutoWithBoto v1.2.3)...' },
-  ]);
+  const [logs, setLogs] = useState([]);
 
   const addLog = (type, message) => {
     setLogs(prev => [...prev, { type, message }]);

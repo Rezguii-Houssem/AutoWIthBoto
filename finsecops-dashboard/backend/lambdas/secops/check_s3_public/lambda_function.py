@@ -1,3 +1,4 @@
+import os
 import json
 import boto3
 from shared.logger_setup import setup_logger, upload_logs_to_s3, reset_log_file
@@ -47,6 +48,12 @@ def lambda_handler(event, context):
                             'RestrictPublicBuckets': True
                         }
                     )
+
+        # Explicitly log findings
+        if public_buckets:
+            logger.warning(f"Scan complete: Found {len(public_buckets)} public S3 buckets: {', '.join([b['BucketName'] for b in public_buckets])}")
+        else:
+            logger.info(f"Scan complete: No public S3 buckets found in region {region}.")
 
         try:
             upload_logs_to_s3(log_bucket, session)

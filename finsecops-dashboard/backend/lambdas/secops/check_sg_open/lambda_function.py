@@ -53,6 +53,14 @@ def lambda_handler(event, context):
                     'Description': sg.get('Description')
                 })
 
+        # Explicitly log findings
+        if open_sgs:
+            # Use standard concatenation to avoid f-string quote nesting issues
+            findings = ", ".join([str(sg['GroupName']) + " (" + str(sg['GroupId']) + ")" for sg in open_sgs])
+            logger.warning(f"Scan complete: Found {len(open_sgs)} open security groups: {findings}")
+        else:
+            logger.info(f"Scan complete: No open security groups found in region {region}.")
+
         # Upload logs
         try:
             upload_logs_to_s3(log_bucket, session)

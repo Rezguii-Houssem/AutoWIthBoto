@@ -25,33 +25,51 @@ resource "aws_iam_policy" "lambda_policy" {
       {
         Effect = "Allow"
         Action = [
+          # EC2 - FinOps (Resource cleanup)
           "ec2:DescribeInstances",
           "ec2:StopInstances",
           "ec2:DescribeVolumes",
           "ec2:DeleteVolume",
+          # EC2 - SecOps (Security Group scan)
+          "ec2:DescribeSecurityGroups",
+          "ec2:RevokeSecurityGroupIngress",
+          # CloudWatch - Metrics
           "cloudwatch:GetMetricStatistics",
+          # S3 - SecOps & Logging
           "s3:GetBucketPolicy",
           "s3:PutBucketPolicy",
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents",
+          "s3:GetBucketPublicAccessBlock",
+          "s3:PutBucketPublicAccessBlock",
+          "s3:GetBucketLocation",
+          "s3:ListBucket",
+          "s3:ListAllMyBuckets",
+          "s3:PutObject",
+          # DynamoDB - State tracking
           "dynamodb:PutItem",
           "dynamodb:GetItem",
           "dynamodb:Scan",
-          "s3:PutObject",
-          "s3:GetBucketLocation",
-          "s3:ListBucket",
+          # SES - Alerts
           "ses:SendEmail",
           "lambda:InvokeFunction",
+          # EventBridge - Schedules
           "events:EnableRule",
           "events:DisableRule",
-          "ce:*",
-          "tag:*"
+          # Cost Explorer & Tagging (Least Privilege)
+          "ce:GetCostAndUsage",
+          "ce:GetCostForecast",
+          "tag:GetResources",
+          "tag:GetTagKeys",
+          "tag:GetTagValues",
+          # Logging
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
         ]
         Resource = "*"
       }
     ]
   })
+
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_attach" {
