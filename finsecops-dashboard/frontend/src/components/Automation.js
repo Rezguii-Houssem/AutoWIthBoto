@@ -10,6 +10,8 @@ const Automation = ({ token }) => {
   const [loading, setLoading] = useState(false);
   const [logs, setLogs] = useState([]);
   const [schedules, setSchedules] = useState([]);
+  const [history, setHistory] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [formData, setFormData] = useState({
     scanType: 'getIdleEC2',
     frequency: 'daily',
@@ -19,19 +21,24 @@ const Automation = ({ token }) => {
     action: 'scan'
   });
 
-  const fetchSchedules = useCallback(async () => {
-    setLoading(true);
+  const fetchSchedules = useCallback(async (isManual = false) => {
+    if (isManual) setRefreshing(true);
+    else setLoading(true);
+    
     try {
       const response = await axios.get(`${API_ENDPOINT}/automation/schedules`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setSchedules(response.data || []);
+      if (isManual) addLog('INFO', "Schedules refreshed successfully.");
     } catch (error) {
       if (handleAuthError(error)) return;
       console.error("Failed to fetch schedules", error);
-      addLog('ERROR', "Persistence Error: Could not retrieve active automations from backend.");
+      addLog('ERROR', "Persistence Error: Could not retrieve active automations.");
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
     }
-    setLoading(false);
   }, [token]);
 
   useEffect(() => {
@@ -101,6 +108,18 @@ const Automation = ({ token }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
       addLog('DONE', `Successfully scheduled ${label} automation in ${formData.region}.`);
+      
+      // Update history
+      const historyItem = {
+        id: Date.now(),
+        type: 'SCHEDULE',
+        label: label,
+        action: actionLabel,
+        details: scheduleTxt,
+        timestamp: new Date().toISOString(),
+        status: 'SUCCESS'
+      };
+      setHistory(prev => [historyItem, ...prev].slice(0, 10));
       
       // Add or update local state
       const newSchedule = {
@@ -244,7 +263,27 @@ const Automation = ({ token }) => {
         {/* Right Column: List & Logs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '12px' }}>
-            <h3>Active Automations</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h3 style={{ margin: 0 }}>Active Automations</h3>
+              <button 
+                onClick={() => fetchSchedules(true)} 
+                disabled={refreshing || loading}
+                style={{ 
+                  background: 'none', 
+                  border: '1px solid #444', 
+                  color: '#aaa', 
+                  padding: '5px 12px', 
+                  borderRadius: '4px', 
+                  cursor: 'pointer',
+                  fontSize: '0.8rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+              >
+                {refreshing ? 'Refreshing...' : '↻ Refresh'}
+              </button>
+            </div>
              {schedules.length > 0 ? (
                 <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
                   <thead>
@@ -289,6 +328,28 @@ const Automation = ({ token }) => {
           </div>
 
           <Terminal logs={logs} />
+
+          <div style={{ background: 'rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '12px' }}>
+            <h3>Automation History</h3>
+            {history.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {history.map(item => (
+                  <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', background: 'rgba(255,255,255,0.02)', borderRadius: '6px', borderLeft: `4px solid ${item.status === 'SUCCESS' ? '#10b981' : '#ef4444'}` }}>
+                    <div>
+                      <span style={{ fontWeight: 'bold', display: 'block' }}>{item.label}: {item.action}</span>
+                      <small style={{ opacity: 0.6 }}>{item.details}</small>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '0.75rem', display: 'block', opacity: 0.5 }}>{new Date(item.timestamp).toLocaleTimeString()}</span>
+                      <span style={{ fontSize: '0.75rem', color: item.status === 'SUCCESS' ? '#10b981' : '#ef4444' }}>{item.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.9rem' }}>No recent activities logged.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>
