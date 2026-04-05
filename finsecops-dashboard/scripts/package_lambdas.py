@@ -46,7 +46,7 @@ def main():
         ("secops/check_s3_public", "check_s3_public.zip"),
         ("secops/check_sg_open", "check_sg_open.zip"),
         ("ses_notifier", "ses_notifier.zip"),
-        ("toggle_scheduler", "toggle_scheduler.zip"),
+        ("manage_schedules", "manage_schedules.zip"),
     ]
 
     shared_dir = os.path.join(lambdas_src, "shared")

@@ -52,8 +52,14 @@ resource "aws_iam_policy" "lambda_policy" {
           "ses:SendEmail",
           "lambda:InvokeFunction",
           # EventBridge - Schedules
+          "events:PutRule",
+          "events:DeleteRule",
+          "events:PutTargets",
+          "events:RemoveTargets",
           "events:EnableRule",
           "events:DisableRule",
+          "lambda:AddPermission",
+          "lambda:RemovePermission",
           # Cost Explorer & Tagging (Least Privilege)
           "ce:GetCostAndUsage",
           "ce:GetCostForecast",

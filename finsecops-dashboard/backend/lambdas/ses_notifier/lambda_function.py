@@ -15,20 +15,30 @@ SCAN_FUNCTIONS = [
 
 def lambda_handler(event, context):
     all_findings = {}
+    is_targeted = event.get('is_targeted_scan', False)
+    scan_name = event.get('scan_name', 'Automated Scan')
+    scan_results = event.get('scan_results', {})
     
-    for func_name in SCAN_FUNCTIONS:
-        try:
-            response = lambda_client.invoke(
-                FunctionName=func_name,
-                InvocationType='RequestResponse'
-            )
-            payload = json.loads(response['Payload'].read())
-            all_findings[func_name] = payload
-        except Exception as e:
-            all_findings[func_name] = {"error": str(e)}
+    if is_targeted:
+        all_findings[scan_name] = scan_results
+        subject = f'[AutoWithBoto] Scheduled Scan Report - {scan_name} - {datetime.now().strftime("%Y-%m-%d %H:%M")}'
+        report_title = f"{scan_name} Scan Results"
+    else:
+        for func_name in SCAN_FUNCTIONS:
+            try:
+                response = lambda_client.invoke(
+                    FunctionName=func_name,
+                    InvocationType='RequestResponse'
+                )
+                payload = json.loads(response['Payload'].read())
+                all_findings[func_name] = payload
+            except Exception as e:
+                all_findings[func_name] = {"error": str(e)}
+        subject = f'FinSecOps Daily Report - {datetime.now().strftime("%Y-%m-%d")}'
+        report_title = "FinSecOps Daily Scan Report"
 
     # Format the report
-    email_body = format_html_report(all_findings)
+    email_body = format_html_report(all_findings, report_title)
     
     # Send email
     try:
@@ -36,7 +46,7 @@ def lambda_handler(event, context):
             Source='rezguii.houssem@gmail.com',
             Destination={'ToAddresses': ['rezguii.houssem@gmail.com']},
             Message={
-                'Subject': {'Data': f'FinSecOps Daily Report - {datetime.now().strftime("%Y-%m-%d")}'},
+                'Subject': {'Data': subject},
                 'Body': {
                     'Html': {'Data': email_body}
                 }
@@ -46,7 +56,7 @@ def lambda_handler(event, context):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-def format_html_report(findings):
+def format_html_report(findings, title):
     html = f"""
     <html>
     <head>
@@ -62,7 +72,7 @@ def format_html_report(findings):
     </head>
     <body>
         <div class="header">
-            <h1>FinSecOps Daily Scan Report</h1>
+            <h1>{title}</h1>
             <p>Generated on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
         </div>
     """

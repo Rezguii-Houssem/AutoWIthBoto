@@ -9,7 +9,14 @@ logger = setup_logger()
 def lambda_handler(event, context):
     try:
         reset_log_file()
-        query_params = event.get('queryStringParameters', {})
+        
+        # Support both API Gateway input and direct EventBridge input
+        is_scheduled = event.get('scheduled', False)
+        if 'queryStringParameters' in event and event['queryStringParameters']:
+            query_params = event['queryStringParameters']
+        else:
+            query_params = event
+            
         region = query_params.get('region', 'eu-west-1')
         action = query_params.get('action', 'scan')  # scan or restrict
         log_bucket = os.environ.get('LOG_BUCKET', 'autowithboto-logs')
@@ -67,7 +74,26 @@ def lambda_handler(event, context):
         except Exception as e:
             logger.error(f"Failed to upload logs to S3: {str(e)}")
 
-        return respond(200, {'open_security_groups': open_sgs, 'count': len(open_sgs)})
+        results = {'open_security_groups': open_sgs, 'count': len(open_sgs)}
+
+        # Trigger SES if scheduled
+        if is_scheduled:
+            try:
+                lambda_client = session.client('lambda')
+                lambda_client.invoke(
+                    FunctionName='ses_notifier',
+                    InvocationType='Event',
+                    Payload=json.dumps({
+                        'is_targeted_scan': True,
+                        'scan_name': 'Security Groups',
+                        'scan_results': results
+                    })
+                )
+                logger.info("Triggered SES Notifier for scheduled scan")
+            except Exception as e:
+                logger.error(f"Error triggering SES notifier: {str(e)}")
+
+        return respond(200, results)
 
     except Exception as e:
         logger.error(f"Error in check_sg_open: {str(e)}")
