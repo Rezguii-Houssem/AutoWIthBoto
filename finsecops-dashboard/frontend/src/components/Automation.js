@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Terminal from './Terminal';
@@ -119,7 +119,7 @@ const Automation = ({ token }) => {
           : existing.minute;
       }
 
-      const response = await axios.post(`${API_ENDPOINT}/automation/schedules`, payload, {
+      await axios.post(`${API_ENDPOINT}/automation/schedules`, payload, {
         headers: { Authorization: `Bearer ${token}` }
       });
       addLog('DONE', `${newStatus} applied to ${scanType}`);
@@ -147,22 +147,22 @@ const Automation = ({ token }) => {
           <h3>Create Automation Rule</h3>
           
           <div className="field" style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Target Scan:</label>
-            <select name="scanType" value={formData.scanType} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }}>
+            <label htmlFor="scanType" style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Target Scan:</label>
+            <select id="scanType" name="scanType" value={formData.scanType} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }}>
               {scanOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
 
           <div className="field" style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Action:</label>
-            <select name="action" value={formData.action} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }}>
+            <label htmlFor="action" style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Action:</label>
+            <select id="action" name="action" value={formData.action} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }}>
               {actionOptions[formData.scanType].map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
           </div>
 
           <div className="field" style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Region:</label>
-            <input name="region" value={formData.region} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }} />
+            <label htmlFor="region" style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Region:</label>
+            <input id="region" name="region" value={formData.region} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }} />
           </div>
 
           <div className="field" style={{ marginBottom: '15px' }}>
@@ -185,14 +185,14 @@ const Automation = ({ token }) => {
 
           {formData.frequency === 'daily' ? (
              <div className="field" style={{ marginBottom: '20px' }}>
-               <label style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Local Time:</label>
-               <input type="time" name="time" value={formData.time} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }} />
+               <label htmlFor="time" style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Local Time:</label>
+               <input id="time" type="time" name="time" value={formData.time} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }} />
                <small style={{ color: '#aaa', display: 'block', marginTop: '5px' }}>Time is automatically converted to UTC for AWS.</small>
              </div>
           ) : (
              <div className="field" style={{ marginBottom: '20px' }}>
-               <label style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Minute of the hour (0-59):</label>
-               <input type="number" min="0" max="59" name="minute" value={formData.minute} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }} />
+               <label htmlFor="minute" style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Minute of the hour (0-59):</label>
+               <input id="minute" type="number" min="0" max="59" name="minute" value={formData.minute} onChange={handleChange} style={{ width: '100%', padding: '10px', borderRadius: '6px', background: '#222', color: '#fff', border: '1px solid #444' }} />
              </div>
           )}
 
@@ -224,7 +224,7 @@ const Automation = ({ token }) => {
                       const scheduleTxt = res.frequency === 'daily' ? `Daily at ${res.time} (Local)` : `Hourly at minute ${res.minute}`;
                       const label = scanOptions.find(o => o.value === res.scanType)?.label || res.scanType;
                       return (
-                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                        <tr key={res.scanType} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                           <td style={{ padding: '12px', fontWeight: 'bold' }}>{label}</td>
                           <td style={{ padding: '12px', opacity: 0.8 }}>{scheduleTxt}</td>
                           <td style={{ padding: '12px', textAlign: 'right' }}>
