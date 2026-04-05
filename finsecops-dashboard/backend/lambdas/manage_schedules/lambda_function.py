@@ -29,6 +29,22 @@ def get_cron_expression(body):
     return body.get('schedule_expression', 'rate(1 day)')
 
 def lambda_handler(event, context):
+    # Handle preflight CORS requests
+    request_context = event.get('requestContext', {})
+    http_method = request_context.get('http', {}).get('method') or event.get('httpMethod')
+    
+    if http_method == 'OPTIONS':
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "POST,GET,OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Max-Age": "3600"
+            },
+            "body": ""
+        }
+    
     try:
         body = json.loads(event.get('body', '{}'))
         action = body.get('action') # 'enable' or 'disable'
