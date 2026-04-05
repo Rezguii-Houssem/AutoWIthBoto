@@ -55,7 +55,9 @@ def lambda_handler(event, context):
 
         # Explicitly log findings
         if open_sgs:
-            logger.warning(f"Scan complete: Found {len(open_sgs)} open security groups: {', '.join([f'{sg['GroupName']} ({sg['GroupId']})' for sg in open_sgs])}")
+            # Use standard concatenation to avoid f-string quote nesting issues
+            findings = ", ".join([str(sg['GroupName']) + " (" + str(sg['GroupId']) + ")" for sg in open_sgs])
+            logger.warning(f"Scan complete: Found {len(open_sgs)} open security groups: {findings}")
         else:
             logger.info(f"Scan complete: No open security groups found in region {region}.")
 

@@ -51,11 +51,17 @@ def lambda_handler(event, context):
             if action == 'delete':
                 logger.warning(f"Deleting volume: {volume_id}")
                 ec2.delete_volume(VolumeId=volume_id)
+        # Explicitly log findings
+        if old_volumes:
+            volumes_list = ", ".join([res['VolumeId'] for res in old_volumes])
+            logger.warning(f"Scan complete: Found {len(old_volumes)} unattached volumes: {volumes_list}")
+        else:
+            logger.info(f"Scan complete: No unattached volumes found in region {region}.")
+
         try:
-            logger.info(f"Scan complete. Found {len(old_volumes)} unattached volumes.")
             upload_logs_to_s3(log_bucket, session)
         except Exception as e:
-            logger.error(f"Log upload failed: {str(e)}")
+            logger.error(f"Failed to upload logs to S3: {str(e)}")
 
         return respond(200, {
             'old_unattached_volumes': old_volumes,

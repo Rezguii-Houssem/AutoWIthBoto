@@ -67,9 +67,15 @@ def lambda_handler(event, context):
                         logger.warning(f"Stopping idle instance: {instance_id}")
                         ec2.stop_instances(InstanceIds=[instance_id])
 
+        # Explicitly log findings
+        if idle_instances:
+            instances_list = ", ".join([res['InstanceId'] for res in idle_instances])
+            logger.warning(f"Scan complete: Found {len(idle_instances)} idle instances: {instances_list}")
+        else:
+            logger.info(f"Scan complete: No idle instances found in region {region}.")
+
         # Upload logs to S3 before finishing
         try:
-            logger.info(f"Scan complete. Found {len(idle_instances)} idle instances.")
             upload_logs_to_s3(log_bucket, session)
         except Exception as e:
             logger.error(f"Failed to upload logs to S3: {str(e)}")
