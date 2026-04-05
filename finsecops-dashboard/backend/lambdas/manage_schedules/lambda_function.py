@@ -2,18 +2,41 @@ import json
 import boto3
 import os
 
-events_client = boto3.client('events')
-lambda_client = boto3.client('lambda')
+from botocore.config import Config
+
+# Standardizing timeout for reliability
+config = Config(
+    connect_timeout=5, 
+    read_timeout=10,
+    retries={'max_attempts': 3}
+)
+
+events_client = boto3.client('events', config=config)
+lambda_client = boto3.client('lambda', config=config)
+
+def get_cron_expression(body):
+    frequency = body.get('frequency')
+    if frequency == 'daily':
+        time_val = body.get('time', '12:00') # HH:MM UTC
+        try:
+            h, m = time_val.split(':')
+            return f"cron({m} {h} * * ? *)"
+        except Exception:
+            return "cron(0 12 * * ? *)"
+    elif frequency == 'hourly':
+        minute = body.get('minute', '0')
+        return f"cron({minute} * * * ? *)"
+    return body.get('schedule_expression', 'rate(1 day)')
 
 def lambda_handler(event, context):
     try:
         body = json.loads(event.get('body', '{}'))
         action = body.get('action') # 'enable' or 'disable'
         lambda_name = body.get('lambda_name')
-        schedule_expression = body.get('schedule_expression', 'rate(1 day)')
+        schedule_expression = get_cron_expression(body)
         params = body.get('params', {})
         
-        region = os.environ.get('AWS_REGION', 'eu-west-3')
+        region = params.get('region', os.environ.get('AWS_REGION', 'eu-west-3'))
         account_id = context.invoked_function_arn.split(":")[4]
 
         if not lambda_name:
@@ -26,7 +49,8 @@ def lambda_handler(event, context):
             events_client.put_rule(
                 Name=rule_name,
                 ScheduleExpression=schedule_expression,
-                State='ENABLED'
+                State='ENABLED',
+                Description=f"Automated schedule for {lambda_name}"
             )
             events_client.put_targets(
                 Rule=rule_name,

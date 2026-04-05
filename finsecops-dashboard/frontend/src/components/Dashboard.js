@@ -45,26 +45,6 @@ const Dashboard = ({ token, activeTab }) => {
     setLoading(false);
   };
 
-  const handleSchedule = async (isScheduled, lambdaName, params) => {
-    setLoading(true);
-    addLog('RUN', `${isScheduled ? 'Enabling' : 'Disabling'} schedule for ${lambdaName}...`);
-    try {
-      const response = await axios.post(`${API_ENDPOINT}/automation/schedules`, {
-        action: isScheduled ? 'enable' : 'disable',
-        lambda_name: lambdaName,
-        schedule_expression: 'rate(1 day)',
-        params: params
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      addLog('DONE', `Schedule updated: ${response.data.message || 'Success'}`);
-    } catch (error) {
-      console.error("Schedule update failed", error);
-      addLog('ERROR', `Schedule update failed: ${error.message}`);
-    }
-    setLoading(false);
-  };
-
   return (
     <div className="dashboard">
       <div className="dashboard-header">
@@ -74,25 +54,21 @@ const Dashboard = ({ token, activeTab }) => {
       <div className="forms-container" style={{ opacity: loading ? 0.7 : 1, pointerEvents: loading ? 'none' : 'auto' }}>
         <FinOpsForm 
           onScan={(params) => handleScan("/finops/ec2/idle", params)} 
-          onSchedule={(isScheduled, params) => handleSchedule(isScheduled, "getIdleEC2", params)}
           title="FinOps | EC2 Optimization" 
           actions={[{ value: 'stop', label: 'Stop Idle Instances' }]}
         />
         <FinOpsForm 
           onScan={(params) => handleScan("/finops/ebs/unattached", params)} 
-          onSchedule={(isScheduled, params) => handleSchedule(isScheduled, "getUnattachedEBS", params)}
           title="FinOps - EBS Volume Cleanup" 
           actions={[{ value: 'delete', label: 'Delete Unattached Volumes' }]}
         />
         <SecOpsForm 
           onScan={(params) => handleScan("/secops/s3", params)} 
-          onSchedule={(isScheduled, params) => handleSchedule(isScheduled, "checkS3Public", params)}
           title="SecOps - S3 Public Access" 
           actions={[{ value: 'secure', label: 'Apply Public Access Block' }]}
         />
         <SecOpsForm 
           onScan={(params) => handleScan("/secops/sg", params)} 
-          onSchedule={(isScheduled, params) => handleSchedule(isScheduled, "checkSGOpen", params)}
           title="SecOps - Security Groups" 
           actions={[{ value: 'restrict', label: 'Remove Public Rules' }]}
         />

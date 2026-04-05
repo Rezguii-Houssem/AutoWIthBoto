@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SecOpsForm = ({ onScan, title, actions, onSchedule }) => {
+const SecOpsForm = ({ onScan, title, actions }) => {
   const [params, setParams] = useState({
     region: 'eu-west-3',
     action: 'scan'
@@ -10,13 +10,6 @@ const SecOpsForm = ({ onScan, title, actions, onSchedule }) => {
     setParams({ ...params, [e.target.name]: e.target.value });
   };
 
-  const [isScheduled, setIsScheduled] = useState(false);
-
-  const toggleSchedule = () => {
-    const newStatus = !isScheduled;
-    setIsScheduled(newStatus);
-    if (onSchedule) onSchedule(newStatus, params);
-  };
 
   return (
     <div className="form-card secops-card">
@@ -34,15 +27,6 @@ const SecOpsForm = ({ onScan, title, actions, onSchedule }) => {
       </div>
       <div style={{ display: 'flex', gap: '10px' }}>
         <button className="scan-btn" onClick={() => onScan(params)}>Run {title}</button>
-        {onSchedule && (
-          <button 
-            className="schedule-btn" 
-            onClick={toggleSchedule}
-            style={{ padding: '10px 20px', background: isScheduled ? '#ef4444' : '#10b981', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-          >
-            {isScheduled ? 'Disable Schedule' : 'Schedule Daily'}
-          </button>
-        )}
       </div>
     </div>
   );

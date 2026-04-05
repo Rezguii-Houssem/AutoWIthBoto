@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const FinOpsForm = ({ onScan, title, actions, onSchedule }) => {
+const FinOpsForm = ({ onScan, title, actions }) => {
   const [params, setParams] = useState({
     region: 'eu-west-3',
     tag_key: '',
@@ -14,13 +14,6 @@ const FinOpsForm = ({ onScan, title, actions, onSchedule }) => {
     setParams({ ...params, [e.target.name]: e.target.value });
   };
 
-  const [isScheduled, setIsScheduled] = useState(false);
-
-  const toggleSchedule = () => {
-    const newStatus = !isScheduled;
-    setIsScheduled(newStatus);
-    if (onSchedule) onSchedule(newStatus, params);
-  };
 
   return (
     <div className="form-card">

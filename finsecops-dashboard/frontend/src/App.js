@@ -4,7 +4,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import { GridBackground } from './components/ui/GridBackground';
 import ResourceScannerDashboard from './components/ResourceScannerDashboard';
-
+import Automation from './components/Automation';
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -120,8 +120,9 @@ function App() {
         <div className="main-content">
           {activeTab === 'dashboard' && <Dashboard activeTab={activeTab} token={token} />}
           {activeTab === 'scans' && <ResourceScannerDashboard token={token} />}
+          {activeTab === 'automation' && <Automation token={token} />}
           {/* Add basic placeholders for others */}
-          {activeTab !== 'dashboard' && activeTab !== 'scans' && (
+          {activeTab !== 'dashboard' && activeTab !== 'scans' && activeTab !== 'automation' && (
             <div style={{ padding: '20px', color: '#fff' }}>
               <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h2>
               <p>Under construction...</p>
