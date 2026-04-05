@@ -1,4 +1,5 @@
 import os
+from botocore.exceptions import ClientError
 from datetime import datetime, timedelta, timezone
 from shared.logger_setup import setup_logger, upload_logs_to_s3, reset_log_file
 from shared.utils import respond, get_boto_session
@@ -105,8 +106,10 @@ def lambda_handler(event, context):
 
             try:
                 cost_response = get_ce_data(group_by_resource=True)
-            except ce.exceptions.ValidationException as val_err:
-                if "RESOURCE_ID" in str(val_err) or "dimension is invalid" in str(val_err):
+            except ClientError as val_err:
+                # Check for ValidationException code explicitly
+                if val_err.response['Error']['Code'] == 'ValidationException' and \
+                   ("RESOURCE_ID" in str(val_err) or "dimension is invalid" in str(val_err)):
                     logger.warning("RESOURCE_ID dimension is currently unavailable (likely pending 24h activation). Falling back to Service-level grouping.")
                     cost_response = get_ce_data(group_by_resource=False)
                 else:
