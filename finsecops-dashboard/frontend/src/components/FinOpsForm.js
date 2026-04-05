@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const FinOpsForm = ({ onScan, title, actions }) => {
+const FinOpsForm = ({ onScan, title, actions, onSchedule, isScheduled, toggleSchedule }) => {
   const [params, setParams] = useState({
     region: 'eu-west-3',
     tag_key: '',
@@ -19,32 +20,32 @@ const FinOpsForm = ({ onScan, title, actions }) => {
     <div className="form-card">
       <h3>{title}</h3>
       <div className="field">
-        <label>Region:</label>
-        <input name="region" value={params.region} onChange={handleChange} />
+        <label htmlFor={`region-${title}`}>Region:</label>
+        <input id={`region-${title}`} name="region" value={params.region} onChange={handleChange} />
       </div>
       <div className="field">
-        <label>Tag Key:</label>
-        <input name="tag_key" value={params.tag_key} onChange={handleChange} placeholder="env" />
+        <label htmlFor={`tag-key-${title}`}>Tag Key:</label>
+        <input id={`tag-key-${title}`} name="tag_key" value={params.tag_key} onChange={handleChange} placeholder="env" />
       </div>
       <div className="field">
-        <label>Tag Value:</label>
-        <input name="tag_value" value={params.tag_value} onChange={handleChange} placeholder="dev" />
+        <label htmlFor={`tag-value-${title}`}>Tag Value:</label>
+        <input id={`tag-value-${title}`} name="tag_value" value={params.tag_value} onChange={handleChange} placeholder="dev" />
       </div>
       {title.includes("EC2") && (
         <>
           <div className="field">
-            <label>CPU Threshold (%):</label>
-            <input type="number" name="cpu_threshold" value={params.cpu_threshold} onChange={handleChange} />
+            <label htmlFor={`cpu-${title}`}>CPU Threshold (%):</label>
+            <input id={`cpu-${title}`} type="number" name="cpu_threshold" value={params.cpu_threshold} onChange={handleChange} />
           </div>
           <div className="field">
-            <label>Time Window (hours):</label>
-            <input type="number" name="hours" value={params.hours} onChange={handleChange} />
+            <label htmlFor={`hours-${title}`}>Time Window (hours):</label>
+            <input id={`hours-${title}`} type="number" name="hours" value={params.hours} onChange={handleChange} />
           </div>
         </>
       )}
       <div className="field">
-        <label>Action:</label>
-        <select name="action" value={params.action} onChange={handleChange}>
+        <label htmlFor={`action-${title}`}>Action:</label>
+        <select id={`action-${title}`} name="action" value={params.action} onChange={handleChange}>
           <option value="scan">Scan Only</option>
           {actions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
         </select>
@@ -63,6 +64,18 @@ const FinOpsForm = ({ onScan, title, actions }) => {
       </div>
     </div>
   );
+};
+
+FinOpsForm.propTypes = {
+  onScan: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  actions: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string,
+    label: PropTypes.string
+  })),
+  onSchedule: PropTypes.bool,
+  isScheduled: PropTypes.bool,
+  toggleSchedule: PropTypes.func
 };
 
 export default FinOpsForm;
