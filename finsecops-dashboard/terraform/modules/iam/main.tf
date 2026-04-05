@@ -58,6 +58,8 @@ resource "aws_iam_policy" "lambda_policy" {
           "events:RemoveTargets",
           "events:EnableRule",
           "events:DisableRule",
+          "events:ListRules",
+          "events:ListTargetsByRule",
           "lambda:AddPermission",
           "lambda:RemovePermission",
           # Cost Explorer & Tagging (Least Privilege)

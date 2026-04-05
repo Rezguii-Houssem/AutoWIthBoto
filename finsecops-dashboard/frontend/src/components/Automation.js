@@ -33,7 +33,8 @@ const Automation = ({ token }) => {
       if (isManual) addLog('INFO', "Schedules refreshed successfully.");
     } catch (error) {
       if (handleAuthError(error)) return;
-      console.error("Failed to fetch schedules", error);
+      // Log specific server response to help debug 500 errors
+      console.error("Server Error Details:", error.response?.data || error.message);
       addLog('ERROR', "Persistence Error: Could not retrieve active automations.");
     } finally {
       setLoading(false);
