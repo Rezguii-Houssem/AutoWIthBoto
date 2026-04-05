@@ -129,7 +129,7 @@ module "manage_schedules" {
   handler               = "lambda_function.lambda_handler"
   role_arn              = module.iam.lambda_role_arn
   api_id                = module.api_gateway.api_id
-  route_key             = "POST /automation/schedules"
+  route_key             = "ANY /automation/schedules"
   authorizer_id         = module.api_gateway.authorizer_id
   environment_variables = {}
   filename         = "../../../builds/manage_schedules.zip"

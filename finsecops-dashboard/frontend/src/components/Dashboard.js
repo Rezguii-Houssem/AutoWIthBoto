@@ -4,6 +4,7 @@ import axios from 'axios';
 import FinOpsForm from './FinOpsForm';
 import SecOpsForm from './SecOpsForm';
 import Terminal from './Terminal';
+import { handleAuthError } from '../lib/auth';
 
 const API_ENDPOINT = process.env.REACT_APP_API_URL || "https://your-api-id.execute-api.eu-west-1.amazonaws.com/dev";
 
@@ -36,9 +37,10 @@ const Dashboard = ({ token, activeTab }) => {
         addLog('COST', `Potential Monthly Savings: $${response.data.estimated_savings}`);
       }
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error("Scan failed", error);
       addLog('ERROR', `Scan failed: ${error.message}`);
-      if (error.response && error.response.data && error.response.data.logs) {
+      if (error.response?.data?.logs) {
         setLogs(prev => [...prev, ...error.response.data.logs]);
       }
     }

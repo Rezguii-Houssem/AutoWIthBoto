@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Terminal from './Terminal';
+import { handleAuthError } from '../lib/auth';
 
 const API_ENDPOINT = process.env.REACT_APP_API_URL || "https://your-api-id.execute-api.eu-west-1.amazonaws.com/dev";
 
@@ -29,9 +30,10 @@ const ResourceScannerDashboard = ({ token }) => {
         setLogs(response.data.logs);
       }
     } catch (err) {
+      if (handleAuthError(err)) return;
       console.error("Scan failed", err);
       setError(err.message || "Failed to scan resources.");
-      if (err.response && err.response.data && err.response.data.logs) {
+      if (err.response?.data?.logs) {
         setLogs(err.response.data.logs);
       }
     }
@@ -60,14 +62,15 @@ const ResourceScannerDashboard = ({ token }) => {
 
       <div className="form-card" style={{ maxWidth: '800px', marginBottom: '20px', display: 'flex', gap: '15px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
         <div className="field">
-          <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '5px' }}>Region:</label>
-          <input value={region} onChange={(e) => setRegion(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: '#fff' }} />
+          <label htmlFor="region-input" style={{ display: 'block', fontSize: '0.8rem', marginBottom: '5px' }}>Region:</label>
+          <input id="region-input" value={region} onChange={(e) => setRegion(e.target.value)} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: '#fff' }} />
         </div>
         <div className="field">
-          <label style={{ display: 'block', fontSize: '0.8rem', marginBottom: '5px' }}>Time Window:</label>
+          <label htmlFor="days-select" style={{ display: 'block', fontSize: '0.8rem', marginBottom: '5px' }}>Time Window:</label>
           <select 
+            id="days-select"
             value={days} 
-            onChange={(e) => setDays(parseInt(e.target.value))}
+            onChange={(e) => setDays(Number.parseInt(e.target.value, 10))}
             style={{ padding: '8px', borderRadius: '4px', border: '1px solid #444', background: '#222', color: '#fff' }}
           >
             <option value={1}>Last 24 Hours</option>
@@ -100,8 +103,8 @@ const ResourceScannerDashboard = ({ token }) => {
               </tr>
             </thead>
             <tbody>
-              {resources.map((res, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.9rem' }}>
+              {resources.map((res) => (
+                <tr key={res.ResourceId || res.ARN || `${res.Name}-${res.Type}`} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '0.9rem' }}>
                   <td style={{ padding: '12px' }}>
                     <span style={{ padding: '4px 8px', borderRadius: '4px', background: 'rgba(59, 130, 246, 0.2)', color: '#60a5fa' }}>{res.Service}</span>
                   </td>

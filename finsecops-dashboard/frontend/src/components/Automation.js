@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Terminal from './Terminal';
+import { handleAuthError } from '../lib/auth';
 
 const API_ENDPOINT = process.env.REACT_APP_API_URL || "https://your-api-id.execute-api.eu-west-1.amazonaws.com/dev";
 
@@ -18,6 +19,27 @@ const Automation = ({ token }) => {
     action: 'scan'
   });
 
+  const fetchSchedules = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_ENDPOINT}/automation/schedules`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSchedules(response.data || []);
+    } catch (error) {
+      if (handleAuthError(error)) return;
+      console.error("Failed to fetch schedules", error);
+      addLog('ERROR', "Persistence Error: Could not retrieve active automations from backend.");
+    }
+    setLoading(false);
+  }, [token]);
+
+  useEffect(() => {
+    if (token) {
+      fetchSchedules();
+    }
+  }, [token, fetchSchedules]);
+
   const scanOptions = [
     { value: 'getIdleEC2', label: 'Idle EC2 Instances' },
     { value: 'getUnattachedEBS', label: 'Unattached EBS Volumes' },
@@ -32,8 +54,11 @@ const Automation = ({ token }) => {
     checkSGOpen: [{ value: 'scan', label: 'Scan Only' }, { value: 'restrict', label: 'Remove Public Rules' }],
   };
 
+  const getScanLabel = (val) => scanOptions.find(o => o.value === val)?.label || val;
+  const getActionLabel = (scanType, val) => actionOptions[scanType]?.find(o => o.value === val)?.label || val;
+
   const addLog = (type, message) => {
-    setLogs(prev => [...prev, { type, message }]);
+    setLogs(prev => [...prev, { type, message: `[${new Date().toLocaleTimeString([], { hour12: false })}] ${message}` }]);
   };
 
   const handleChange = (e) => {
@@ -57,9 +82,13 @@ const Automation = ({ token }) => {
       ? convertLocalToUTC(formData.time) 
       : formData.minute;
 
-    addLog('RUN', `Configuring automation for ${formData.scanType}...`);
+    const label = getScanLabel(formData.scanType);
+    const actionLabel = getActionLabel(formData.scanType, formData.action);
+    const scheduleTxt = formData.frequency === 'daily' ? `daily at ${formData.time}` : `hourly at minute ${formData.minute}`;
+
+    addLog('RUN', `Initiating ${actionLabel} for ${label.toUpperCase()} (${scheduleTxt})...`);
     try {
-      const response = await axios.post(`${API_ENDPOINT}/automation/schedules`, {
+      await axios.post(`${API_ENDPOINT}/automation/schedules`, {
         action: 'enable',
         lambda_name: formData.scanType,
         frequency: formData.frequency,
@@ -71,7 +100,7 @@ const Automation = ({ token }) => {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      addLog('DONE', `Automation configured: ${response.data.message || 'Success'}`);
+      addLog('DONE', `Successfully scheduled ${label} automation in ${formData.region}.`);
       
       // Add or update local state
       const newSchedule = {
@@ -92,6 +121,7 @@ const Automation = ({ token }) => {
       });
 
     } catch (error) {
+      if (handleAuthError(error)) return;
       console.error("Automation setup failed", error);
       addLog('ERROR', `Automation setup failed: ${error.message}`);
     }
@@ -101,7 +131,9 @@ const Automation = ({ token }) => {
   const handleToggleState = async (scanType, currentStatus) => {
     setLoading(true);
     const newStatus = currentStatus === 'ENABLED' ? 'DISABLED' : 'ENABLED';
-    addLog('RUN', `${newStatus === 'ENABLED' ? 'Enabling' : 'Disabling'} automation for ${scanType}...`);
+    const label = getScanLabel(scanType);
+    const statusLabel = newStatus === 'ENABLED' ? 'ACTIVATING' : 'DEACTIVATING';
+    addLog('RUN', `${statusLabel}: Updating schedule state for ${label}...`);
     
     // Find existing schedule info to preserve it during re-enable
     const existing = schedules.find(s => s.scanType === scanType);
@@ -128,7 +160,10 @@ const Automation = ({ token }) => {
         s.scanType === scanType ? { ...s, status: newStatus } : s
       ));
     } catch (error) {
-       addLog('ERROR', `Failed to toggle: ${error.message}`);
+      if (handleAuthError(error)) {
+        return;
+      }
+      addLog('ERROR', `Authorization or network failure: ${error.message}`);
     }
     setLoading(false);
   };
@@ -166,7 +201,7 @@ const Automation = ({ token }) => {
           </div>
 
           <div className="field" style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Frequency:</label>
+            <span style={{ display: 'block', marginBottom: '5px', opacity: 0.8 }}>Frequency:</span>
             <div style={{ display: 'flex', gap: '10px' }}>
               <button 
                 onClick={() => handleFrequencyChange('daily')}

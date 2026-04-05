@@ -5,22 +5,24 @@ import Login from './components/Login';
 import { GridBackground } from './components/ui/GridBackground';
 import ResourceScannerDashboard from './components/ResourceScannerDashboard';
 import Automation from './components/Automation';
+import { cognitoConfig, clearLocalAuth } from './lib/auth';
 function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [token, setToken] = useState(null);
+  const [activeTab, setActiveTab] = useState(localStorage.getItem('active_tab') || 'dashboard');
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('auth_token'));
+  const [token, setToken] = useState(localStorage.getItem('auth_token'));
 
   useEffect(() => {
     // Check for access token in URL hash (Cognito Implicit Grant)
-    const hash = window.location.hash;
-    if (hash && hash.includes('access_token')) {
+    const hash = globalThis.location.hash;
+    if (hash?.includes('access_token')) {
       const params = new URLSearchParams(hash.substring(1));
       const accessToken = params.get('access_token');
       if (accessToken) {
         setToken(accessToken);
         setIsLoggedIn(true);
+        localStorage.setItem('auth_token', accessToken);
         // Clear hash AND potentially the callback path if redirecting from OIDC
-        window.history.replaceState(null, null, '/');
+        globalThis.history.replaceState(null, null, '/');
       }
     }
   }, []);
@@ -46,19 +48,30 @@ function App() {
   const handleLoginSuccess = (userToken) => {
     setToken(userToken);
     setIsLoggedIn(true);
+    localStorage.setItem('auth_token', userToken);
+  };
+
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    localStorage.setItem('active_tab', tabId);
   };
 
   const handleLogout = () => {
+    // 1. Clear local application state
     setIsLoggedIn(false);
     setToken(null);
+    
+    // 2. Clear persistence layer (localStorage and Cognito SDK local session)
+    clearLocalAuth();
 
-    // Redirect to Cognito's logout endpoint to clear the server-side session
-    const cognitoDomain = process.env.REACT_APP_COGNITO_DOMAIN || '';
-    const region = process.env.REACT_APP_AWS_REGION || 'eu-west-3';
-    const clientId = process.env.REACT_APP_COGNITO_CLIENT_ID || '';
-    const logoutUri = window.location.origin + '/';
-    const logoutUrl = `https://${cognitoDomain}.auth.${region}.amazoncognito.com/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-    window.location.href = logoutUrl;
+    // 3. Force redirect to Cognito's logout endpoint to clear the server-side cookie session
+    const logoutUri = globalThis.location.origin + '/';
+    const logoutUrl = `https://${cognitoConfig.domain}.auth.${cognitoConfig.region}.amazoncognito.com/logout?client_id=${cognitoConfig.clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+    
+    // Use a small delay to ensure state updates reach anything that needs them, though location.href is terminal
+    setTimeout(() => {
+      globalThis.location.href = logoutUrl;
+    }, 50);
   };
 
   const tabs = [
@@ -108,7 +121,7 @@ function App() {
             <button 
               key={tab.id} 
               className={activeTab === tab.id ? 'active' : ''}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
             >
               {tab.label}
             </button>
