@@ -23,8 +23,9 @@ resource "aws_apigatewayv2_integration" "lambda" {
 }
 
 resource "aws_apigatewayv2_route" "route" {
+  for_each           = toset(concat(var.route_key != "" ? [var.route_key] : [], var.route_keys))
   api_id             = var.api_id
-  route_key          = var.route_key
+  route_key          = each.key
   target             = "integrations/${aws_apigatewayv2_integration.lambda.id}"
   authorization_type = "JWT"
   authorizer_id      = var.authorizer_id

@@ -25,7 +25,13 @@ variable "api_id" {
 }
 
 variable "route_key" {
-  type = string
+  type    = string
+  default = ""
+}
+
+variable "route_keys" {
+  type    = list(string)
+  default = []
 }
 
 variable "authorizer_id" {

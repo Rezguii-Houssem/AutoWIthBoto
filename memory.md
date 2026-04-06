@@ -51,3 +51,10 @@
 - Terraform modules should handle optional providers gracefully.
 - **Hygiene**: Always clean up temporary troubleshooting logs (`temp-log.txt`) or scratch files before concluding a task.
 - **GitHub Actions**: Workflows in subdirectories are ignored; keep the primary deployment logic in the root `.github/workflows/` folder.
+- **Pattern**: `Frontend-to-UTC Calculation` for AWS EventBridge schedules. Use `d.getUTCHours()` and `d.getUTCMinutes()` to ensure consistency regardless of user timezone.
+- **API Constraint**: EventBridge `put_rule` needs specific `cron` formats. For Hourly, `cron(minute * * * ? *)`. For Daily, `cron(minute hour * * ? *)`.
+- **Lesson**: React forms require `htmlFor` and `id` pairing for full accessibility and lint compliance.
+- **Lesson**: Boto3 client configuration (`connect_timeout`, `read_timeout`) is critical for reliability in Lambda-to-Service orchestration.
+- **Lesson (Organization)**: Keep documentation assets (images, schemas) in a SINGLE root `assets/` folder. Avoid creating duplicate resource directories in sub-folders (e.g., `finsecops-dashboard/assets`) to maintain a clean workspace.
+
+---

@@ -123,19 +123,17 @@ module "ses_notifier" {
   source_code_hash      = filebase64sha256("../../../builds/ses_notifier.zip")
 }
 
-module "toggle_scheduler" {
+module "manage_schedules" {
   source                = "../../modules/lambda"
-  function_name         = "toggleScheduler"
+  function_name         = "manageSchedules"
   handler               = "lambda_function.lambda_handler"
   role_arn              = module.iam.lambda_role_arn
   api_id                = module.api_gateway.api_id
-  route_key             = "POST /automation/scheduler/toggle"
+  route_keys            = ["GET /automation/schedules", "POST /automation/schedules"]
   authorizer_id         = module.api_gateway.authorizer_id
-  environment_variables = {
-    RULE_NAME = module.automation.rule_name
-  }
-  filename         = "../../../builds/toggle_scheduler.zip"
-  source_code_hash = filebase64sha256("../../../builds/toggle_scheduler.zip")
+  environment_variables = {}
+  filename         = "../../../builds/manage_schedules.zip"
+  source_code_hash = filebase64sha256("../../../builds/manage_schedules.zip")
 }
 
 module "automation" {

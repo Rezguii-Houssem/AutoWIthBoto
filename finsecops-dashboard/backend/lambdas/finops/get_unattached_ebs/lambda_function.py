@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import datetime, timezone, timedelta
 from shared.logger_setup import setup_logger, upload_logs_to_s3, reset_log_file
@@ -9,8 +10,13 @@ logger = setup_logger()
 def lambda_handler(event, context):
     try:
         reset_log_file()
-        query_params = event.get('queryStringParameters', {})
-
+        
+        is_scheduled = event.get('scheduled', False)
+        if 'queryStringParameters' in event and event['queryStringParameters']:
+            query_params = event['queryStringParameters']
+        else:
+            query_params = event
+            
         region = query_params.get('region', 'eu-west-3')
         action = query_params.get('action', 'scan')
         age_days = int(query_params.get('age_days', 7))
@@ -63,10 +69,28 @@ def lambda_handler(event, context):
         except Exception as e:
             logger.error(f"Failed to upload logs to S3: {str(e)}")
 
-        return respond(200, {
+        results = {
             'old_unattached_volumes': old_volumes,
             'count': len(old_volumes)
-        })
+        }
+
+        if is_scheduled:
+            try:
+                lambda_client = session.client('lambda')
+                lambda_client.invoke(
+                    FunctionName='ses_notifier',
+                    InvocationType='Event',
+                    Payload=json.dumps({
+                        'is_targeted_scan': True,
+                        'scan_name': 'Unattached EBS Volumes',
+                        'scan_results': results
+                    })
+                )
+                logger.info("Triggered SES Notifier for scheduled scan")
+            except Exception as e:
+                logger.error(f"Error triggering SES notifier: {str(e)}")
+
+        return respond(200, results)
 
     except Exception as e:
         logger.error(f"Error: {str(e)}")

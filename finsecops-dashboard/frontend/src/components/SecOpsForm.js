@@ -10,6 +10,7 @@ const SecOpsForm = ({ onScan, title, actions }) => {
     setParams({ ...params, [e.target.name]: e.target.value });
   };
 
+
   return (
     <div className="form-card secops-card">
       <h3>{title}</h3>
@@ -24,7 +25,9 @@ const SecOpsForm = ({ onScan, title, actions }) => {
           {actions.map(a => <option key={a.value} value={a.value}>{a.label}</option>)}
         </select>
       </div>
-      <button className="scan-btn" onClick={() => onScan(params)}>Run {title}</button>
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button className="scan-btn" onClick={() => onScan(params)}>Run {title}</button>
+      </div>
     </div>
   );
 };

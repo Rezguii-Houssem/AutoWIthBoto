@@ -1,17 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { AuthenticationDetails, CognitoUser, CognitoUserPool } from 'amazon-cognito-identity-js';
+import { AuthenticationDetails, CognitoUser } from 'amazon-cognito-identity-js';
+import { userPool, cognitoConfig } from '../lib/auth';
 
-const poolData = {
-  UserPoolId: process.env.REACT_APP_COGNITO_USER_POOL_ID || 'YOUR_USER_POOL_ID',
-  ClientId: process.env.REACT_APP_COGNITO_CLIENT_ID || 'YOUR_CLIENT_ID'
-};
-
-const userPool = new CognitoUserPool(poolData);
-
-const cognitoDomain = process.env.REACT_APP_COGNITO_DOMAIN || '';
-const region = process.env.REACT_APP_AWS_REGION || 'eu-west-3';
-const redirectUri = window.location.origin + '/authorize2identity_provider';
+const redirectUri = globalThis.location.origin + '/';
 
 const Login = ({ onLoginSuccess }) => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -23,9 +15,23 @@ const Login = ({ onLoginSuccess }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  let title = "Welcome Back";
+  if (isConfirming) {
+    title = "Confirm Account";
+  } else if (isSignUp) {
+    title = "Create an Account";
+  }
+
+  let submitText = isSignUp ? "Sign Up" : "Sign In";
+  if (loading) {
+    submitText = "Processing...";
+  } else if (isConfirming) {
+    submitText = "Verify Code";
+  }
+
   const handleGoogleLogin = () => {
-    const url = `https://${cognitoDomain}.auth.${region}.amazoncognito.com/oauth2/authorize?identity_provider=Google&redirect_uri=${redirectUri}&response_type=token&client_id=${poolData.ClientId}&scope=email+openid+profile&prompt=select_account`;
-    window.location.href = url;
+    const url = `https://${cognitoConfig.domain}.auth.${cognitoConfig.region}.amazoncognito.com/oauth2/authorize?identity_provider=Google&redirect_uri=${encodeURIComponent(cognitoConfig.redirectUri)}&response_type=token&client_id=${cognitoConfig.clientId}&scope=email+openid+profile&prompt=select_account`;
+    globalThis.location.href = url;
   };
 
   const handleAuthSubmit = (e) => {
@@ -85,7 +91,7 @@ const Login = ({ onLoginSuccess }) => {
 
   return (
     <div className="login-card">
-      <h2>{isConfirming ? "Confirm Account" : (isSignUp ? "Create an Account" : "Welcome Back")}</h2>
+      <h2>{title}</h2>
       <p>{isConfirming ? "Check your email for the verification code" : "Securely manage your AWS environment"}</p>
       
       <form onSubmit={handleAuthSubmit}>
@@ -148,7 +154,7 @@ const Login = ({ onLoginSuccess }) => {
         {error && <div className="error-message" style={{color: error.includes('successful') ? '#4caf50' : ''}}>{error}</div>}
         
         <button type="submit" className="scan-btn" disabled={loading}>
-          {loading ? 'Processing...' : (isConfirming ? 'Verify Code' : (isSignUp ? 'Sign Up' : 'Sign In'))}
+          {submitText}
         </button>
 
         {!isConfirming && !isSignUp && (
@@ -160,13 +166,14 @@ const Login = ({ onLoginSuccess }) => {
       
       <div className="auth-footer">
         {!isConfirming && (
-          <span 
+          <button 
+            type="button"
             className="forgot-link" 
-            style={{cursor: 'pointer'}} 
+            style={{cursor: 'pointer', background: 'none', border: 'none', color: 'inherit', font: 'inherit', padding: 0}} 
             onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
           >
             {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
-          </span>
+          </button>
         )}
       </div>
     </div>

@@ -22,7 +22,13 @@ def get_average_cpu(cw_client, instance_id, start_time, end_time):
 def lambda_handler(event, context):
     try:
         reset_log_file()
-        query_params = event.get('queryStringParameters', {})
+        
+        is_scheduled = event.get('scheduled', False)
+        if 'queryStringParameters' in event and event['queryStringParameters']:
+            query_params = event['queryStringParameters']
+        else:
+            query_params = event
+            
         region = query_params.get('region', 'eu-west-3')
         tag_key = query_params.get('tag_key')
         tag_value = query_params.get('tag_value')
@@ -80,7 +86,25 @@ def lambda_handler(event, context):
         except Exception as e:
             logger.error(f"Failed to upload logs to S3: {str(e)}")
 
-        return respond(200, {'idle_instances': idle_instances, 'count': len(idle_instances)})
+        results = {'idle_instances': idle_instances, 'count': len(idle_instances)}
+
+        if is_scheduled:
+            try:
+                lambda_client = session.client('lambda')
+                lambda_client.invoke(
+                    FunctionName='ses_notifier',
+                    InvocationType='Event',
+                    Payload=json.dumps({
+                        'is_targeted_scan': True,
+                        'scan_name': 'Idle EC2 Instances',
+                        'scan_results': results
+                    })
+                )
+                logger.info("Triggered SES Notifier for scheduled scan")
+            except Exception as e:
+                logger.error(f"Error triggering SES notifier: {str(e)}")
+
+        return respond(200, results)
 
     except Exception as e:
         logger.error(f"Error in get_idle_ec2: {str(e)}")
