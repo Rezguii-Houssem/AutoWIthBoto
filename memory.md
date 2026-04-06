@@ -55,3 +55,6 @@
 - **API Constraint**: EventBridge `put_rule` needs specific `cron` formats. For Hourly, `cron(minute * * * ? *)`. For Daily, `cron(minute hour * * ? *)`.
 - **Lesson**: React forms require `htmlFor` and `id` pairing for full accessibility and lint compliance.
 - **Lesson**: Boto3 client configuration (`connect_timeout`, `read_timeout`) is critical for reliability in Lambda-to-Service orchestration.
+- **Lesson (Organization)**: Keep documentation assets (images, schemas) in a SINGLE root `assets/` folder. Avoid creating duplicate resource directories in sub-folders (e.g., `finsecops-dashboard/assets`) to maintain a clean workspace.
+
+---

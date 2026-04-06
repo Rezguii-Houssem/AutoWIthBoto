@@ -9,15 +9,55 @@
 
 ---
 
-## 🎨 System Architecture
+## 🛠️ System Architecture
 
 ![FinSecOps Architecture](assets/architecture.png)
 
-The platform follows a **Serverless-First** architecture designed for low latency, tight security, and high scalability.
-- **Frontend**: React-based dashboard served via S3 + CloudFront.
-- **Security**: AWS Cognito Handles Authentication, API Gateway manages the REST interface.
-- **Execution**: Python (Boto3) Lambdas execute complex resource audits and remediation logic.
-- **Automation**: EventBridge triggers scheduled scans (Daily/Hourly) with SES/SNS notifications.
+The **AutoWithBoto** platform is built on a high-availability, serverless architecture that integrates a dedicated **DevOps Pipeline** for continuous delivery and a robust **EventBridge Orchestrator** for automated infrastructure management.
+
+- **Frontend**: Single Page Application (SPA) hosted in **Amazon S3** and distributed by **CloudFront** for low-latency global delivery.
+- **Security**: **Amazon Cognito** handles primary authentication and authorization for the dashboard and API.
+- **Backend API**: **Amazon API Gateway** (HTTP API) interfaces with localized **Lambda Functions** (Python/Boto3).
+- **Automation Heart**: **Amazon EventBridge** rules trigger periodic scans and remediations according to your defined schedules (10m, 1h, Daily).
+- **Execution Engine**: Lightweight **Lambda** functions perform deep infrastructure audits against **CloudWatch Metrics** and service APIs (EC2, S3, EBS).
+- **Notifications**: Alerts and success logs are dispatched via **Amazon SES** (Email) and **Amazon SNS** (Webhooks).
+
+---
+
+## 🚀 GitHub Actions CI/CD Pipeline
+
+The platform is managed by a centralized GitHub Actions workflow, ensuring consistent builds and secure infrastructure deployments.
+
+1.  **🔍 Code Quality**: Automated linting and unit tests for Python Lambdas.
+2.  **📦 Build Phase**: Packaging Lambda code zip files and staging frontend assets.
+3.  **⚡ Terraform Deploy**: Orchestrates the provisioning of AWS resources (IAM, EventBridge, S3) with state management.
+4.  **🌐 Frontend Sync**: Synchronizes the build artifacts with the S3 bucket and perform a CloudFront invalidation for immediate updates.
+
+---
+
+## 🖼️ UI Showcase
+
+Experience the power of **AutoWithBoto** through its intuitive, high-performance dashboard.
+
+### 📊 Central Audit Dashboard
+The core interface for manual execution. It allows engineers to run ad-hoc scans for EC2 optimization, EBS cleanup, and security hardening with real-time terminal output.
+
+![Dashboard Overview](assets/dashboard.png)
+
+### 🔍 Account-Wide Resource Scanner
+A comprehensive sweep of all AWS resources, providing a high-level view of resource counts and cost distributions across the account.
+
+![Resource Scanner](assets/resource_scanner.png)
+
+### 🤖 Intelligent Automation (EventBridge)
+The background engine of the platform. Using Amazon EventBridge, you can schedule recurring tasks with two distinct execution modes:
+
+![Automation Module](assets/automation_module.png)
+
+1.  **🔍 Scheduled Scanning (Dry-Run)**:  
+    Monitor your infrastructure on a 10-minute, hourly, or daily basis. The system identifies issues and logs them to the history for your review without making changes.
+2.  **⚡ Automated Remediation (Hands-Off)**:  
+    Enable full automation to let the system handle remediation workflows. It will automatically **Stop Idle EC2** instances, **Unattach Orphaned EBS** volumes, or **Secure S3 Buckets** the moment they violate policy.
 
 ---
 
@@ -32,6 +72,22 @@ The platform follows a **Serverless-First** architecture designed for low latenc
 - **S3 Public Access Scan**: Audits bucket policies and Public Access Blocks to prevent data leaks.
 - **Security Group Audit**: Identifies open ports (e.g., 22/3389) that expose your network.
 - **Automated Lockdown**: Secure your infrastructure with one click using pre-validated remediation scripts.
+
+---
+
+## 🛡️ Safe Audit & Controlled Remediation
+
+**AutoWithBoto** prioritizes infrastructure integrity. Every automation follows a strict two-stage security protocol:
+
+1.  **🔍 Deep Audit (Scan-Only)**:  
+    -   Perform comprehensive resource discovery without any destructive actions.
+    -   Visualize findings in the central dashboard to assess potential cost savings or security risks.
+    -   Perfect for "What-If" analysis and periodic reporting.
+
+2.  **⚡ Manual Remediation (One-Click)**:  
+    -   Only after you are **100% confident**, trigger the remediation action.
+    -   Targeted execution: Delete unattached EBS volumes or stop idle EC2 instances only when you authorize it.
+    -   Full control remains with the administrator, eliminating accidental downtime.
 
 ---
 
@@ -69,29 +125,6 @@ python scripts/destroy.py
 
 ---
 
-## 🏢 Scaling to Multi-Account Architecture
-
-Want to scan your entire organization? **AutoWithBoto** is built to scale using a **Hub-and-Spoke** model.
-
-### The Problem
-By default, the Lambda role only has permissions within its own account. To scan multiple accounts, we use **IAM Role Assumption**.
-
-### Step-by-Step Implementation:
-1. **Target Account Role**: Create an IAM role (e.g., `FinSecOpsScannerRole`) in all target accounts with the necessary `ReadOnlyAccess` or custom permissions.
-2. **Trust Relationship**: Allow the **Hub Account's Lambda Role** to assume this role.
-   ```json
-   {
-     "Version": "2012-10-17",
-     "Statement": [{
-       "Effect": "Allow",
-       "Principal": { "AWS": "arn:aws:iam::HubAccountID:role/lambda-role" },
-       "Action": "sts:AssumeRole"
-     }]
-   }
-   ```
-3. **Lambda Hub Update**: Modify `utils.py` to loop through a list of account IDs and assume the role before initializing the Boto3 client.
-
----
 
 ## ⚠️ Critical Warnings
 
