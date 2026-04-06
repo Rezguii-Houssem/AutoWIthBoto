@@ -78,9 +78,6 @@ function App() {
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'scans', label: 'Scans' },
     { id: 'automation', label: 'Automation' },
-    { id: 'cost', label: 'Cost' },
-    { id: 'security', label: 'Security' },
-    { id: 'settings', label: 'Settings' }
   ];
 
   if (!isLoggedIn) {
@@ -134,13 +131,7 @@ function App() {
           {activeTab === 'dashboard' && <Dashboard activeTab={activeTab} token={token} />}
           {activeTab === 'scans' && <ResourceScannerDashboard token={token} />}
           {activeTab === 'automation' && <Automation token={token} />}
-          {/* Add basic placeholders for others */}
-          {activeTab !== 'dashboard' && activeTab !== 'scans' && activeTab !== 'automation' && (
-            <div style={{ padding: '20px', color: '#fff' }}>
-              <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h2>
-              <p>Under construction...</p>
-            </div>
-          )}
+
         </div>
       </div>
     </div>
