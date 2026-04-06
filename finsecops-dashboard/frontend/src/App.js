@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import CostModule from './components/CostModule';
-import SecurityModule from './components/SecurityModule';
-import SettingsModule from './components/SettingsModule';
+import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import { GridBackground } from './components/ui/GridBackground';
+import ResourceScannerDashboard from './components/ResourceScannerDashboard';
+import Automation from './components/Automation';
 import { cognitoConfig, clearLocalAuth } from './lib/auth';
-
 function App() {
-  const [activeTab, setActiveTab] = useState(localStorage.getItem('active_tab') || 'cost');
+  const [activeTab, setActiveTab] = useState(localStorage.getItem('active_tab') || 'dashboard');
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('auth_token'));
   const [token, setToken] = useState(localStorage.getItem('auth_token'));
 
   useEffect(() => {
+    // Check for access token in URL hash (Cognito Implicit Grant)
     const hash = globalThis.location.hash;
     if (hash?.includes('access_token')) {
       const params = new URLSearchParams(hash.substring(1));
@@ -21,10 +21,29 @@ function App() {
         setToken(accessToken);
         setIsLoggedIn(true);
         localStorage.setItem('auth_token', accessToken);
+        // Clear hash AND potentially the callback path if redirecting from OIDC
         globalThis.history.replaceState(null, null, '/');
       }
     }
   }, []);
+  
+  // Script to hide Spline watermark
+  useEffect(() => {
+    if (isLoggedIn) return;
+    
+    const hideSplineLogo = () => {
+      const viewer = document.querySelector('spline-viewer');
+      const logo = viewer?.shadowRoot?.querySelector('#logo');
+      if (logo) {
+        logo.style.display = 'none';
+      }
+    };
+
+    // Check periodically as it might take a moment to load in the shadow DOM
+    const interval = setInterval(hideSplineLogo, 500);
+    return () => clearInterval(interval);
+  }, [isLoggedIn]);
+
   
   const handleLoginSuccess = (userToken) => {
     setToken(userToken);
@@ -38,15 +57,27 @@ function App() {
   };
 
   const handleLogout = () => {
+    // 1. Clear local application state
     setIsLoggedIn(false);
     setToken(null);
+    
+    // 2. Clear persistence layer (localStorage and Cognito SDK local session)
     clearLocalAuth();
+
+    // 3. Force redirect to Cognito's logout endpoint to clear the server-side cookie session
     const logoutUri = globalThis.location.origin + '/';
     const logoutUrl = `https://${cognitoConfig.domain}.auth.${cognitoConfig.region}.amazoncognito.com/logout?client_id=${cognitoConfig.clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-    globalThis.location.href = logoutUrl;
+    
+    // Use a small delay to ensure state updates reach anything that needs them, though location.href is terminal
+    setTimeout(() => {
+      globalThis.location.href = logoutUrl;
+    }, 50);
   };
 
   const tabs = [
+    { id: 'dashboard', label: 'Dashboard' },
+    { id: 'scans', label: 'Scans' },
+    { id: 'automation', label: 'Automation' },
     { id: 'cost', label: 'Cost' },
     { id: 'security', label: 'Security' },
     { id: 'settings', label: 'Settings' }
@@ -79,10 +110,10 @@ function App() {
   }
 
   return (
-    <div className="App dark-theme">
+    <div className="App">
       <nav className="top-nav">
         <div className="logo-box">
-          <span className="logo-icon">🤖</span>
+          <span className="logo-icon" style={{ fontSize: '1.5rem' }}>🤖</span>
           <span>AutoWithBoto</span>
         </div>
         <div className="nav-links">
@@ -100,9 +131,16 @@ function App() {
       </nav>
       <div className="main-layout-dashboard">
         <div className="main-content">
-          {activeTab === 'cost' && <CostModule token={token} />}
-          {activeTab === 'security' && <SecurityModule token={token} />}
-          {activeTab === 'settings' && <SettingsModule token={token} />}
+          {activeTab === 'dashboard' && <Dashboard activeTab={activeTab} token={token} />}
+          {activeTab === 'scans' && <ResourceScannerDashboard token={token} />}
+          {activeTab === 'automation' && <Automation token={token} />}
+          {/* Add basic placeholders for others */}
+          {activeTab !== 'dashboard' && activeTab !== 'scans' && activeTab !== 'automation' && (
+            <div style={{ padding: '20px', color: '#fff' }}>
+              <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h2>
+              <p>Under construction...</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
