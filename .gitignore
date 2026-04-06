@@ -45,5 +45,8 @@ spline.txt
 files.txt
 builds/
 
-# Project Management
+# Project Management & Orchestration (Local Only)
 PROGRESS.md
+memory.md
+AGENTS.md
+directives/
